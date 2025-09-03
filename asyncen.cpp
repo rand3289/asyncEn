@@ -1,4 +1,4 @@
-// asyncEn is an an asynchronous environment
+// asyncEn is an asynchronous environment
 #include "game.h"
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 #include <iostream>
@@ -26,27 +26,26 @@ int main(int argc, char* argv[]){
     if(0==window){ exitSDLerr(); }
     SDL_Renderer * renderer = SDL_CreateRenderer(window, -1, 0);
     if(0==renderer){ exitSDLerr(); }
-
     SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP); // SDL_WINDOW_FULLSCREEN for different resolution
-
-    SDL_DisplayMode dm;
-    SDL_GetCurrentDisplayMode(0, &dm);
 
     Game game;
     SDL_Event e;
+    e.type = SDL_USEREVENT;
+    game.event(e); // signal to initialize
+//    SDL_RegisterEvents(1);
+
     bool run = true;
     while(run){
         while( SDL_PollEvent( &e ) ){
             if(e.type == SDL_QUIT){ run=false; }
             else if(e.type == SDL_KEYUP ){
                 switch(e.key.keysym.sym){
-                    case SDLK_ESCAPE: run=false;        break;
                     case SDLK_RETURN: toggleFS(window); break;
-                    default: game.event(e);
+                    case SDLK_ESCAPE: run=false;        break;
+                    default:                            break;
                 }
-            } else {
-                game.event(e);
             }
+            game.event(e);
         }
 
         SDL_SetRenderDrawBlendMode(renderer,SDL_BLENDMODE_NONE);
