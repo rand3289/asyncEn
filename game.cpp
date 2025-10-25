@@ -2,6 +2,7 @@
 // where cells have to find each other
 // everything that moves ripples
 // faster moving objects create more ripples
+// entities look like tubers in a lazy river
 // 3 entities that eat each other
 
 #include "game.h"
