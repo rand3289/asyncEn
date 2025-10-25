@@ -1,4 +1,4 @@
-// asyncEn is an asynchronous environment
+// asyncEn is an asynchronous environment based on SDL
 #include "game.h"
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 #include <iostream>
