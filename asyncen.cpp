@@ -16,24 +16,20 @@ void exitSDLerr(){
 }
 
 int main(int argc, char* argv[]){
-    const int SCREEN_WIDTH = 1024;
-    const int SCREEN_HEIGHT = 768;
+    const int WIDTH = 1024;
+    const int HEIGHT = 768;
     const int WINPOS = SDL_WINDOWPOS_CENTERED;
 
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 ) { exitSDLerr(); }
 
-    SDL_Window* window=SDL_CreateWindow("asyncEn", WINPOS, WINPOS, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Window* window=SDL_CreateWindow("asyncEn", WINPOS, WINPOS, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
     if(0==window){ exitSDLerr(); }
     SDL_Renderer * renderer = SDL_CreateRenderer(window, -1, 0);
     if(0==renderer){ exitSDLerr(); }
-    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP); // SDL_WINDOW_FULLSCREEN for different resolution
+//    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP); // SDL_WINDOW_FULLSCREEN for different resolution
 
     Game game;
     SDL_Event e;
-    e.type = SDL_USEREVENT;
-    game.event(e); // signal to initialize
-//    SDL_RegisterEvents(1);
-
     bool run = true;
     while(run){
         while( SDL_PollEvent( &e ) ){

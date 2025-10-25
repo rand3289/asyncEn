@@ -1,7 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 
-// void runTests(SDL_Renderer* rend, int x, int y);
 
 struct Point2D {
     double x,y;
@@ -20,5 +19,5 @@ struct Point2D {
     }
 };
 
-void drawCircle(SDL_Renderer* renderer, int32_t centreX, int32_t centreY, int32_t radius);
 void line(SDL_Renderer* rend, const Point2D& p1, const Point2D& p2);
+void drawCircle(SDL_Renderer* renderer, int32_t centreX, int32_t centreY, int32_t radius);

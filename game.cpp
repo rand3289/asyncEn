@@ -10,13 +10,20 @@
 #include <iostream>
 #include <string>
 
+void Game::getDisplay(){
+    SDL_DisplayMode dm;
+    SDL_GetCurrentDisplayMode(0, &dm);
+    width = dm.w;
+    height = dm.h;
+}
+
+Game::Game(){
+    getDisplay();
+}
 
 void Game::event(SDL_Event& e){
-    if(e.type == SDL_USEREVENT || (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_RETURN) ){
-        SDL_DisplayMode dm;
-        SDL_GetCurrentDisplayMode(0, &dm);
-        width = dm.w;
-        height = dm.h;
+    if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_RETURN){
+        getDisplay();
     }
     std::cout << '.';
     std::cout.flush();
@@ -28,6 +35,5 @@ void Game::draw(SDL_Renderer* renderer){
     static int r = 0;
     r = (r+1) % (width/2);
     drawCircle(renderer, width/2, height/2, r);
-//    runTests(renderer, width/2, height/2);
     SDL_Delay( 1 );
 }

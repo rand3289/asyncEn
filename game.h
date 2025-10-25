@@ -1,10 +1,12 @@
 #pragma once
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 
-struct Game {
+class Game {
     int width;
     int height;
-    Game(): width(0), height(0) {}
+    void getDisplay();
+public:
+    Game();
     void event(SDL_Event& e);
     void draw(SDL_Renderer* renderer);
 };
