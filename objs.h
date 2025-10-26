@@ -11,14 +11,9 @@ struct Wave {
     double r,g,b; // SDL_FColor color; // floating point r,g,b available since SDL 3.2.0.
     Circle circle;
     Wave(SDL_Color rgb, double x, double y, double radius): r(rgb.r), g(rgb.g), b(rgb.b), circle(x,y,radius) {}
-    
-    // Copy constructor
     Wave(const Wave& other): r(other.r), g(other.g), b(other.b), circle(other.circle) {}
-    
-    // Move constructor
     Wave(Wave&& other) noexcept: r(other.r), g(other.g), b(other.b), circle(std::move(other.circle)) {}
-    
-    // Assignment operator
+
     Wave& operator=(const Wave& other) {
         if (this != &other) {
             r = other.r;
@@ -54,13 +49,9 @@ struct Life {
     Point2D velocity;
     double angle;
     
-    // Copy constructor
     Life(const Life& other): health(other.health), color(other.color), circle(other.circle), velocity(other.velocity), angle(other.angle) {}
-    
-    // Move constructor
     Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), velocity(std::move(other.velocity)), angle(other.angle) {}
-    
-    // Assignment operator
+
     Life& operator=(const Life& other) {
         if (this != &other) {
             health = other.health;
@@ -71,7 +62,7 @@ struct Life {
         }
         return *this;
     }
-    
+
     void draw(SDL_Renderer* rend);
     void move();
     void kick(bool leftLeg, bool rightLeg); // action

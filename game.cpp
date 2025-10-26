@@ -41,18 +41,14 @@ void Game::event(SDL_Event& e){
 
 void Game::draw(SDL_Renderer* rend){
 
+// need to do collision detection with other lives and waves
+// for collision detection: sort all life by how far they are from the center of the screen.
+// determine collisions between life within a sliding window
     for(Life& life: lives){
         life.draw(rend);
         life.move();
         if(life.health <=0){} // TODO: remove from lives
-        // need to do collision detection with life and waves
     }
-
-//    for(Wave& wave: waves){
-//        wave.draw(rend);
-//        wave.move();
-//        if( wave.isGone() ){}  // TODO: remove from waves
-//    }
 
     for(int i=0; i< waves.size(); ++i){
         waves[i].draw(rend);
@@ -63,12 +59,7 @@ void Game::draw(SDL_Renderer* rend){
 // TEST ONLY:
             waves.emplace_back(col,rand()%width, rand()%height, 10); 
         }
-        // need to do collision detection with life
     }
 
     SDL_Delay( 10 );
 }
-
-
-// for collision detection: sort all life by how far they are from the center of the screen.
-// determine collisions between life within a sliding window
