@@ -24,38 +24,16 @@ struct Point2D {
 };
 
 
+void line(SDL_Renderer* rend, const Point2D& p1, const Point2D& p2);
+void drawCircle(SDL_Renderer* rend, int32_t centreX, int32_t centreY, int32_t radius);
+
+
 struct Circle {
     Point2D center;
     double radius;
+    Circle(double x, double y, double rad): center(x,y), radius(rad) {}
     void draw(SDL_Renderer* rend){ drawCircle(rend,center.x, center.y, radius); }
     double distance(Circle& rhs){
         return center.distance(rhs.center) - (radius+rhs.radius);
     }
 };
-
-
-// every time Life kicks, it creates a wave
-// waves die out when their color fades to zero
-struct Wave {
-    Circle circle;
-    Color color;
-    void draw();
-    void propagate();
-};
-
-
-struct Life {
-    double health;
-    Color color;
-    Circle circle;
-    Point2D velocity;
-    double angle;
-    void draw(SDL_Renderer* rend);
-    void kick(bool leftLeg, bool rightLeg); // action
-    void hitEvent();
-    void rippleEvent();
-};
-
-
-void line(SDL_Renderer* rend, const Point2D& p1, const Point2D& p2);
-void drawCircle(SDL_Renderer* rend, int32_t centreX, int32_t centreY, int32_t radius);
