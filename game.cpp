@@ -18,9 +18,10 @@ void Game::getDisplay(){
     height = dm.h;
 }
 
+static SDL_Color col;
+
 Game::Game(){
     getDisplay();
-    SDL_Color col;
     col.a = SDL_ALPHA_OPAQUE;
     col.r = 255;
     col.g = 0;
@@ -39,21 +40,31 @@ void Game::event(SDL_Event& e){
 
 
 void Game::draw(SDL_Renderer* rend){
+
     for(Life& life: lives){
         life.draw(rend);
+        life.move();
         if(life.health <=0){} // TODO: remove from lives
+        // need to do collision detection with life and waves
     }
 
-    for(Wave& wave: waves){
-        wave.draw(rend);
-        wave.move();
-        if( wave.isGone() ){}  // TODO: remove from waves
-    }
+//    for(Wave& wave: waves){
+//        wave.draw(rend);
+//        wave.move();
+//        if( wave.isGone() ){}  // TODO: remove from waves
+//    }
 
-//    SDL_SetRenderDrawColor(rend, 250, 250, 250, SDL_ALPHA_OPAQUE);
-//    static int r = 0;
-//    r = (r+1) % (width/2);
-//    drawCircle(rend, width/2, height/2, r);
+    for(int i=0; i< waves.size(); ++i){
+        waves[i].draw(rend);
+        waves[i].move();
+        if( waves[i].isGone() ){ // TODO: remove from waves
+            waves.erase(waves.begin() + i);
+            --i;
+// TEST ONLY:
+            waves.emplace_back(col,rand()%width, rand()%height, 10); 
+        }
+        // need to do collision detection with life
+    }
 
     SDL_Delay( 10 );
 }

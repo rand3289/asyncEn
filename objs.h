@@ -37,6 +37,7 @@ struct Life {
     Point2D velocity;
     double angle;
     void draw(SDL_Renderer* rend);
+    void move();
     void kick(bool leftLeg, bool rightLeg); // action
     void hitEvent();
     void rippleEvent();
