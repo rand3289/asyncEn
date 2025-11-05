@@ -41,6 +41,16 @@ struct Wave {
     }
 };
 
+struct Event {
+    // time
+    // source
+    // direction
+};
+
+struct Action {
+    // time
+    // type
+};
 
 struct Life {
     double health;
@@ -63,9 +73,14 @@ struct Life {
         return *this;
     }
 
-    void draw(SDL_Renderer* rend);
-    void move();
-    void kick(bool leftLeg, bool rightLeg); // action
-    void hitEvent();
-    void rippleEvent();
+    void draw(SDL_Renderer* rend); // draws on screen ONLY!
+    void move();                   // calculates position, velocity, orientation
+    void action(const Action& a);  // agent wants to perform this action (eg: kick left, kick right)
+    void event(const Event& e);    // collision, wave, health increase or decrease.
 };
+
+// It seems ALL objects can calculate their own locations, velocity and acceleration till a collision occurs.
+// All objects can use this information to draw itself.
+// When a collision occurs, location, velocity and acceleration have to be calculated and recorded
+
+// Walls need to send linear waves

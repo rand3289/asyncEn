@@ -22,6 +22,8 @@ static SDL_Color col;
 
 Game::Game(){
     getDisplay();
+
+// TESTING:
     col.a = SDL_ALPHA_OPAQUE;
     col.r = 255;
     col.g = 0;
@@ -40,6 +42,8 @@ void Game::event(SDL_Event& e){
 
 
 void Game::draw(SDL_Renderer* rend){
+// TODO: need to introduce a notion of time into this thing
+//    auto time = std::chrono::high_resolution_clock::now();
 
 // need to do collision detection with other lives and waves
 // for collision detection: sort all life by how far they are from the center of the screen.
@@ -53,11 +57,11 @@ void Game::draw(SDL_Renderer* rend){
     for(int i=0; i< waves.size(); ++i){
         waves[i].draw(rend);
         waves[i].move();
-        if( waves[i].isGone() ){ // TODO: remove from waves
+        if( waves[i].isGone() ){ // remove waves that have dissipated
             waves.erase(waves.begin() + i);
             --i;
 // TEST ONLY:
-            waves.emplace_back(col,rand()%width, rand()%height, 10); 
+            waves.emplace_back(col, rand() % (int)width, rand() % (int)height, 10.0);
         }
     }
 

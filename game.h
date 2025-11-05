@@ -5,8 +5,8 @@
 
 
 class Game {
-    int width;
-    int height;
+    double width;
+    double height;
     void getDisplay();
     std::vector<Wave> waves;
     std::vector<Life> lives;
