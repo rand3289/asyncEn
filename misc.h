@@ -49,8 +49,8 @@ struct Circle {
         return *this;
     }
 
-    void draw(SDL_Renderer* rend){ drawCircle(rend,center.x, center.y, radius); }
-    double distance(Circle& rhs){
+    void draw(SDL_Renderer* rend) const { drawCircle(rend,center.x, center.y, radius); }
+    double distance(const Circle& rhs) const {
         return center.distance(rhs.center) - (radius+rhs.radius);
     }
 };

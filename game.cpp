@@ -42,12 +42,16 @@ void Game::event(SDL_Event& e){
     std::cout.flush();
 }
 
+bool checkCollision(const Circle& a, const Circle& b) {
+    return a.distance(b) <= (a.radius + b.radius);
+}
+
 
 void Game::draw(SDL_Renderer* rend){
     const int fps = 60;
     const auto frameTime = std::chrono::milliseconds(1000/fps);
 
-    static std::chrono::high_resolution_clock::time_point nextTime;
+    static std::chrono::high_resolution_clock::time_point nextTime = std::chrono::high_resolution_clock::now();
     auto time = std::chrono::high_resolution_clock::now();
 
     if(time < nextTime){
@@ -55,25 +59,45 @@ void Game::draw(SDL_Renderer* rend){
     }
     nextTime += frameTime;
 
-// need to do collision detection with other lives and waves
-// for collision detection: sort all life by how far they are from the center of the screen.
-// determine collisions between life within a sliding window
-    for(Life& life: lives){
-        life.draw(rend);
-        life.move();
-        if(life.health <=0){} // TODO: remove from lives
+const Event e;
+
+    for (size_t i = 0; i < lives.size(); ++i) {
+        for (size_t j = i + 1; j < lives.size(); ++j) {
+            if ( checkCollision(lives[i].circle, lives[j].circle) ) {
+                lives[i].event(e);
+                lives[j].event(e);
+            }
+        }
+    }
+
+    for (Life& life: lives) {
+        for (const Wave& wave: waves) {
+            if( checkCollision(life.circle, wave.circle) ){
+                life.event(e);
+            }
+        }
+    }
+
+    for(int i=0; i < lives.size(); ++i){
+        if(lives[i].health <=0){
+            lives.erase(lives.begin() + i);
+            --i;
+            continue;
+        }
+        lives[i].draw(rend);
+        lives[i].move();
     }
 
     for(int i=0; i< waves.size(); ++i){
-        waves[i].draw(rend);
-        waves[i].move();
         if( waves[i].isGone() ){ // remove waves that have dissipated
             waves.erase(waves.begin() + i);
             --i;
 // TEST ONLY:
             waves.emplace_back(col, rand() % (int)width, rand() % (int)height, 10.0);
+            continue;
         }
+        waves[i].draw(rend);
+        waves[i].move();
     }
 
-    SDL_Delay( 10 );
 }
