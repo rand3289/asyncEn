@@ -10,6 +10,8 @@
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 #include <iostream>
 #include <string>
+#include <chrono>
+#include <thread> // sleep_for()
 
 void Game::getDisplay(){
     SDL_DisplayMode dm;
@@ -42,8 +44,16 @@ void Game::event(SDL_Event& e){
 
 
 void Game::draw(SDL_Renderer* rend){
-// TODO: need to introduce a notion of time into this thing
-//    auto time = std::chrono::high_resolution_clock::now();
+    const int fps = 60;
+    const auto frameTime = std::chrono::milliseconds(1000/fps);
+
+    static std::chrono::high_resolution_clock::time_point nextTime;
+    auto time = std::chrono::high_resolution_clock::now();
+
+    if(time < nextTime){
+        std::this_thread::sleep_for(nextTime-time);
+    }
+    nextTime += frameTime;
 
 // need to do collision detection with other lives and waves
 // for collision detection: sort all life by how far they are from the center of the screen.
