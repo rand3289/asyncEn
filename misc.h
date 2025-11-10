@@ -29,6 +29,10 @@ struct Point2D {
         double dy = y - rhs.y;
         return sqrt(dx*dx + dy*dy);
     }
+
+    double angle(const Point2D& rhs)const {
+        return  (180.0/M_PI) * atan2(rhs.y - y, rhs.x - x);
+    }
 };
 
 
@@ -49,8 +53,15 @@ struct Circle {
         return *this;
     }
 
-    void draw(SDL_Renderer* rend) const { drawCircle(rend,center.x, center.y, radius); }
+    void draw(SDL_Renderer* rend) const {
+        drawCircle(rend,center.x, center.y, radius);
+    }
+
     double distance(const Circle& rhs) const {
         return center.distance(rhs.center) - (radius+rhs.radius);
+    }
+
+    bool checkCollision(const Circle& b) {
+        return distance(b) <= (radius + b.radius);
     }
 };
