@@ -18,4 +18,5 @@ public:
     static Game& getInstance();
     void event(SDL_Event& e);
     void draw(SDL_Renderer* rend);
+    void addWave(const SDL_Color& color, const Point2D& p);
 };

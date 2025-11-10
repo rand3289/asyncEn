@@ -1,3 +1,4 @@
+#pragma once
 #include "misc.h"
 #include <SDL2/SDL.h>
 #include <chrono>
@@ -65,6 +66,7 @@ struct Life {
     Circle circle;
     Point2D velocity;
     double angle;
+    LockFreeQueue<Action> actQ;
     
     Life(const Life& other): health(other.health), color(other.color), circle(other.circle), velocity(other.velocity), angle(other.angle) {}
     Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), velocity(std::move(other.velocity)), angle(other.angle) {}

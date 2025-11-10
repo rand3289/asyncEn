@@ -20,7 +20,12 @@ void Game::getDisplay(){
     height = dm.h;
 }
 
-static SDL_Color col;
+static SDL_Color col = {255,0,0,SDL_ALPHA_OPAQUE};
+
+void Game::addWave(const SDL_Color& color, const Point2D& p){
+    waves.emplace_back(color, p.x, p.y, 1);
+}
+
 
 Game& Game::getInstance() {
     static Game instance;
@@ -31,10 +36,6 @@ Game::Game(){
     getDisplay();
 
 // TESTING:
-    col.a = SDL_ALPHA_OPAQUE;
-    col.r = 255;
-    col.g = 0;
-    col.b = 0;
     waves.emplace_back(col, 500,500,10);
     waves.emplace_back(col, 100,100,10);
 }
