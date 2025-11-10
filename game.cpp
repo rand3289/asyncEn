@@ -22,6 +22,11 @@ void Game::getDisplay(){
 
 static SDL_Color col;
 
+Game& Game::getInstance() {
+    static Game instance;
+    return instance;
+}
+
 Game::Game(){
     getDisplay();
 

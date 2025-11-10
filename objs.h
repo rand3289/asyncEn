@@ -1,6 +1,7 @@
 #include "misc.h"
 #include <SDL2/SDL.h>
 #include <chrono>
+#include "lockfree_queue.hpp"
 
 
 // every time Life kicks, it creates a wave

@@ -28,7 +28,7 @@ int main(int argc, char* argv[]){
     if(0==renderer){ exitSDLerr(); }
 //    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP); // SDL_WINDOW_FULLSCREEN for different resolution
 
-    Game game;
+    Game& game = Game::getInstance();
     SDL_Event e;
     bool run = true;
     while(run){

@@ -1,3 +1,5 @@
+// AI generated
+
 #pragma once
 #include <atomic>
 #include <memory>

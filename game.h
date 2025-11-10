@@ -10,8 +10,12 @@ class Game {
     void getDisplay();
     std::vector<Wave> waves;
     std::vector<Life> lives;
-public:
+    
     Game();
+    Game(const Game&) = delete;
+    Game& operator=(const Game&) = delete;
+public:
+    static Game& getInstance();
     void event(SDL_Event& e);
     void draw(SDL_Renderer* rend);
 };
