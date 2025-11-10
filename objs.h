@@ -13,6 +13,7 @@ struct Wave {
 
     double r,g,b; // SDL_FColor color; // floating point r,g,b available since SDL 3.2.0.
     Circle circle;
+
     Wave(SDL_Color rgb, double x, double y, double radius): r(rgb.r), g(rgb.g), b(rgb.b), circle(x,y,radius) {}
     Wave(const Wave& other): r(other.r), g(other.g), b(other.b), circle(other.circle) {}
     Wave(Wave&& other) noexcept: r(other.r), g(other.g), b(other.b), circle(std::move(other.circle)) {}
@@ -70,17 +71,7 @@ struct Life {
     
     Life(const Life& other): health(other.health), color(other.color), circle(other.circle), velocity(other.velocity), angle(other.angle) {}
     Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), velocity(std::move(other.velocity)), angle(other.angle) {}
-
-    Life& operator=(const Life& other) {
-        if (this != &other) {
-            health = other.health;
-            color = other.color;
-            circle = other.circle;
-            velocity = other.velocity;
-            angle = other.angle;
-        }
-        return *this;
-    }
+    Life& operator=(const Life& other);
 
     void draw(SDL_Renderer* rend); // draws on screen ONLY!
     void move();                   // calculates position, velocity, orientation
