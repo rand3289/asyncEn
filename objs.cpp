@@ -23,7 +23,11 @@ void Wave::move() {
     b = b>fadeSpeed ? b-fadeSpeed : 0.0;
 }
 
-void Life::draw(SDL_Renderer* rend){}
+
+void Life::draw(SDL_Renderer* rend){
+    SDL_SetRenderDrawColor(rend, color.r, color.g, color.b, SDL_ALPHA_OPAQUE);
+    circle.draw(rend);
+}
 void Life::event(const Event& e){}
 
 void Life::action(const Action& a){
@@ -39,12 +43,12 @@ void Life::move(){
 }
 
 Life& Life::operator=(const Life& other) {
-        if (this != &other) {
-            health = other.health;
-            color = other.color;
-            circle = other.circle;
-            velocity = other.velocity;
-            angle = other.angle;
-        }
-        return *this;
+    if (this != &other) {
+        health = other.health;
+        color = other.color;
+        circle = other.circle;
+        velocity = other.velocity;
+        angle = other.angle;
     }
+    return *this;
+}

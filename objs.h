@@ -47,6 +47,10 @@ struct Life {
     double angle;
     LockFreeQueue<Action> actQ; // agent's brain runs on a different thread
 
+    Life(): health(10.0), circle(100,100,10), velocity(10,10), angle(0) { 
+        color.r = color.g = color.b = 255;
+        color.a = SDL_ALPHA_OPAQUE;
+    }
     Life(const Life& other): health(other.health), color(other.color), circle(other.circle), velocity(other.velocity), angle(other.angle) {}
     Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), velocity(std::move(other.velocity)), angle(other.angle) {}
     Life& operator=(const Life& other);

@@ -7,13 +7,13 @@
 class Game {
     double width;
     double height;
-    void getDisplay();
     std::vector<Wave> waves;
     std::vector<Life> lives;
-    
+
     Game();
     Game(const Game&) = delete;
     Game& operator=(const Game&) = delete;
+    void getDisplay();
 public:
     static Game& getInstance();
     void event(SDL_Event& e);

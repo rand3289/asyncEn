@@ -13,40 +13,7 @@
 #include <chrono>
 #include <thread> // sleep_for()
 
-void Game::getDisplay(){
-    SDL_DisplayMode dm;
-    SDL_GetCurrentDisplayMode(0, &dm);
-    width = dm.w;
-    height = dm.h;
-}
-
 static SDL_Color col = {255,0,0,SDL_ALPHA_OPAQUE};
-
-void Game::addWave(const SDL_Color& color, const Point2D& p){
-    waves.emplace_back(color, p.x, p.y, 1);
-}
-
-
-Game& Game::getInstance() {
-    static Game instance;
-    return instance;
-}
-
-Game::Game(){
-    getDisplay();
-
-// TESTING:
-    waves.emplace_back(col, 500,500,10);
-    waves.emplace_back(col, 100,100,10);
-}
-
-void Game::event(SDL_Event& e){
-    if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_RETURN){
-        getDisplay();
-    }
-    std::cout << '.';
-    std::cout.flush();
-}
 
 bool checkCollision(const Circle& a, const Circle& b) {
     return a.distance(b) <= (a.radius + b.radius);
@@ -56,6 +23,43 @@ double calcAngle(Point2D& p1, Point2D& p2){
     return 0;
 }
 
+/**********************************************************************/
+Game& Game::getInstance() {
+    static Game instance;
+    return instance;
+}
+
+void Game::getDisplay(){
+    SDL_DisplayMode dm;
+    SDL_GetCurrentDisplayMode(0, &dm);
+    width = dm.w;
+    height = dm.h;
+}
+
+Game::Game(){
+    getDisplay();
+    lives.emplace_back();
+}
+
+void Game::addWave(const SDL_Color& color, const Point2D& p){
+    waves.emplace_back(color, p.x, p.y, 1);
+}
+
+
+void Game::event(SDL_Event& e){
+    if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_RETURN){
+        getDisplay();
+    }
+    std::cout << '.';
+    std::cout.flush();
+
+// TODO: testing only:
+    Action a;
+    a.action = ActionType::kickLeft;
+    for(Life& life: lives){
+        life.action(a);
+    }
+}
 
 void Game::draw(SDL_Renderer* rend){
     const int fps = 60;
@@ -106,12 +110,9 @@ void Game::draw(SDL_Renderer* rend){
         if( waves[i].isGone() ){ // remove waves that have dissipated
             waves.erase(waves.begin() + i);
             --i;
-// TEST ONLY:
-            waves.emplace_back(col, rand() % (int)width, rand() % (int)height, 10.0);
             continue;
         }
         waves[i].draw(rend);
         waves[i].move();
     }
-
 }
