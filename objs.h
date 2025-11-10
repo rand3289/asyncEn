@@ -1,5 +1,6 @@
 #include "misc.h"
 #include <SDL2/SDL.h>
+#include <chrono>
 
 
 // every time Life kicks, it creates a wave
@@ -41,15 +42,20 @@ struct Wave {
     }
 };
 
+
+enum EventType{collision, wave};
+
 struct Event {
-    // time
-    // source
-    // direction
+    std::chrono::high_resolution_clock::time_point time;
+    EventType event;
+    double srcAngle;
 };
 
+enum ActionType{ kickLeft, kickRight, kickBoth };
+
 struct Action {
-    // time
-    // type
+    std::chrono::high_resolution_clock::time_point time;
+    ActionType action;
 };
 
 struct Life {

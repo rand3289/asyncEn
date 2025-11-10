@@ -46,6 +46,10 @@ bool checkCollision(const Circle& a, const Circle& b) {
     return a.distance(b) <= (a.radius + b.radius);
 }
 
+double calcAngle(Point2D& p1, Point2D& p2){
+    return 0;
+}
+
 
 void Game::draw(SDL_Renderer* rend){
     const int fps = 60;
@@ -59,17 +63,21 @@ void Game::draw(SDL_Renderer* rend){
     }
     nextTime += frameTime;
 
-const Event e;
+    Event e = {time, EventType::collision, 0.0};
 
     for (size_t i = 0; i < lives.size(); ++i) {
         for (size_t j = i + 1; j < lives.size(); ++j) {
             if ( checkCollision(lives[i].circle, lives[j].circle) ) {
+                double angle = calcAngle(lives[i].circle.center, lives[j].circle.center);
+                e.srcAngle = angle;
                 lives[i].event(e);
+                e.srcAngle = angle+180;
                 lives[j].event(e);
             }
         }
     }
 
+    e.event = EventType::wave;
     for (Life& life: lives) {
         for (const Wave& wave: waves) {
             if( checkCollision(life.circle, wave.circle) ){
