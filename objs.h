@@ -4,7 +4,6 @@
 #include <chrono>
 #include "lockfree_queue.hpp"
 
-
 // every time Life kicks, it creates a wave
 // waves die out when their color fades to zero
 struct Wave {
@@ -18,31 +17,10 @@ struct Wave {
     Wave(const Wave& other): r(other.r), g(other.g), b(other.b), circle(other.circle) {}
     Wave(Wave&& other) noexcept: r(other.r), g(other.g), b(other.b), circle(std::move(other.circle)) {}
 
-    Wave& operator=(const Wave& other) {
-        if (this != &other) {
-            r = other.r;
-            g = other.g;
-            b = other.b;
-            circle = other.circle;
-        }
-        return *this;
-    }
-
-    void draw(SDL_Renderer* rend) {
-        SDL_SetRenderDrawColor(rend, r, g, b, SDL_ALPHA_OPAQUE);
-        circle.draw(rend);
-    }
-
-    void move() {
-        circle.radius += waveSpeed;
-        r = r>fadeSpeed ? r-fadeSpeed : 0.0;
-        g = g>fadeSpeed ? g-fadeSpeed : 0.0;
-        b = b>fadeSpeed ? b-fadeSpeed : 0.0;
-    }
-
-    bool isGone() {
-        return r<=0 && g<=0 && b<=0;
-    }
+    Wave& operator=(const Wave& other);
+    void draw(SDL_Renderer* rend);
+    void move();
+    bool isGone() { return r<=0 && g<=0 && b<=0; }
 };
 
 
@@ -67,8 +45,8 @@ struct Life {
     Circle circle;
     Point2D velocity;
     double angle;
-    LockFreeQueue<Action> actQ;
-    
+    LockFreeQueue<Action> actQ; // agent's brain runs on a different thread
+
     Life(const Life& other): health(other.health), color(other.color), circle(other.circle), velocity(other.velocity), angle(other.angle) {}
     Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), velocity(std::move(other.velocity)), angle(other.angle) {}
     Life& operator=(const Life& other);
