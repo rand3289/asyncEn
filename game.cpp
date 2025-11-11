@@ -1,9 +1,6 @@
 // game of life played on the surface of a pond
-// where cells have to find each other
 // everything that moves ripples
-// faster moving objects create more ripples
 // entities look like tubers in a lazy river
-// 3 entities that eat each other
 
 #include "game.h"
 #include "misc.h"
@@ -12,8 +9,6 @@
 #include <string>
 #include <chrono>
 #include <thread> // sleep_for()
-
-//static SDL_Color col = {255,0,0,SDL_ALPHA_OPAQUE};
 
 
 Game& Game::getInstance() {
@@ -66,8 +61,8 @@ void Game::draw(SDL_Renderer* rend){
     }
     nextTime += frameTime;
 
+    // check collisions among lives
     Event e = {time, EventType::collision, 0.0};
-
     for (size_t i = 0; i < lives.size(); ++i) {
         for (size_t j = i + 1; j < lives.size(); ++j) {
             if ( lives[i].circle.checkCollision(lives[j].circle) ) {
@@ -80,6 +75,7 @@ void Game::draw(SDL_Renderer* rend){
         }
     }
 
+    // check collisions between lives and waves
     e.event = EventType::wave;
     for (Life& life: lives) {
         for (const Wave& wave: waves) {
@@ -90,7 +86,7 @@ void Game::draw(SDL_Renderer* rend){
     }
 
     for(int i=0; i < lives.size(); ++i){
-        if(lives[i].health <=0){
+        if(lives[i].getHealth() <=0){
             lives.erase(lives.begin() + i);
             --i;
             continue;

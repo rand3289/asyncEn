@@ -1,6 +1,7 @@
 #include "objs.h"
 #include "game.h"
 
+
 Wave& Wave::operator=(const Wave& other) {
     if (this != &other) {
         r = other.r;
@@ -28,6 +29,7 @@ void Life::draw(SDL_Renderer* rend){
     SDL_SetRenderDrawColor(rend, color.r, color.g, color.b, SDL_ALPHA_OPAQUE);
     circle.draw(rend);
 }
+
 void Life::event(const Event& e){}
 
 void Life::action(const Action& a){

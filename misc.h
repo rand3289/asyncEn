@@ -30,13 +30,17 @@ struct Point2D {
         return sqrt(dx*dx + dy*dy);
     }
 
-    double angle(const Point2D& rhs)const {
+    double angle(const Point2D& rhs) const {
         return  (180.0/M_PI) * atan2(rhs.y - y, rhs.x - x);
     }
 };
 
 
-void line(SDL_Renderer* rend, const Point2D& p1, const Point2D& p2);
+inline void line(SDL_Renderer* rend, const Point2D& p1, const Point2D& p2){
+    SDL_RenderDrawLine(rend, p1.x, p1.y , p2.x, p2.y);
+}
+
+
 void drawCircle(SDL_Renderer* rend, int32_t centreX, int32_t centreY, int32_t radius);
 
 
@@ -61,7 +65,7 @@ struct Circle {
         return center.distance(rhs.center) - (radius+rhs.radius);
     }
 
-    bool checkCollision(const Circle& b) {
+    bool checkCollision(const Circle& b) const {
         return distance(b) <= (radius + b.radius);
     }
 };

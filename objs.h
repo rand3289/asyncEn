@@ -1,17 +1,17 @@
 #pragma once
 #include "misc.h"
+#include "lockfree_queue.hpp"
 #include <SDL2/SDL.h>
 #include <chrono>
-#include "lockfree_queue.hpp"
 
-// every time Life kicks, it creates a wave
-// waves die out when their color fades to zero
-struct Wave {
+
+class Wave {
     const double waveSpeed = 1.0;
     const double fadeSpeed = 2.0;
 
     double r,g,b; // SDL_FColor color; // floating point r,g,b available since SDL 3.2.0.
-    Circle circle;
+public:
+    Circle circle; // TODO: make this private
 
     Wave(SDL_Color rgb, double x, double y, double radius): r(rgb.r), g(rgb.g), b(rgb.b), circle(x,y,radius) {}
     Wave(const Wave& other): r(other.r), g(other.g), b(other.b), circle(other.circle) {}
@@ -39,13 +39,14 @@ struct Action {
     ActionType action;
 };
 
-struct Life {
+class Life {
     double health;
     SDL_Color color;
-    Circle circle;
     Point2D velocity;
     double angle;
     LockFreeQueue<Action> actQ; // agent's brain runs on a different thread
+public:
+    Circle circle; // TODO: make this private
 
     Life(): health(10.0), circle(100,100,10), velocity(10,10), angle(0) { 
         color.r = color.g = color.b = 255;
@@ -59,10 +60,5 @@ struct Life {
     void move();                   // calculates position, velocity, orientation
     void action(const Action& a);  // agent wants to perform this action (eg: kick left, kick right)
     void event(const Event& e);    // collision, wave, health increase or decrease.
+    double getHealth(){ return health; }
 };
-
-// It seems ALL objects can calculate their own locations, velocity and acceleration till a collision occurs.
-// All objects can use this information to draw itself.
-// When a collision occurs, location, velocity and acceleration have to be calculated and recorded
-
-// Walls need to send linear waves
