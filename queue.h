@@ -1,5 +1,4 @@
-// AI generated
-
+// AI generated lock free queue
 #pragma once
 #include <atomic>
 #include <memory>

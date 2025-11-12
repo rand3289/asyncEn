@@ -25,26 +25,26 @@ void Game::getDisplay(){
 
 Game::Game(){
     getDisplay();
-    lives.emplace_back();
 }
 
 void Game::addWave(const SDL_Color& color, const Point2D& p){
-    waves.emplace_back(color, p.x, p.y, 1);
+    waves.emplace_back(color, p.x, p.y, 1); 
 }
 
 
 void Game::event(SDL_Event& e){
-    if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_RETURN){
-        getDisplay();
-    }
-    std::cout << '.';
-    std::cout.flush();
-
-// TODO: testing only:
-    Action a;
-    a.action = ActionType::kickLeft;
-    for(Life& life: lives){
-        life.action(a);
+    if(e.type == SDL_KEYDOWN){
+        Action a = {.action = ActionType::none };
+        switch(e.key.keysym.sym){
+            case SDLK_RETURN: getDisplay(); break;
+            case SDLK_LEFT:   a.action = ActionType::kickLeft;  break;
+            case SDLK_RIGHT:  a.action = ActionType::kickRight; break;
+            case SDLK_UP:     a.action = ActionType::kickBoth;  break;
+            case SDLK_DOWN:   lives.emplace_back(); break;
+        }
+        for(Life& life: lives){
+            life.action(a);
+        }
     }
 }
 

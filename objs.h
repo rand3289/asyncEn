@@ -1,6 +1,6 @@
 #pragma once
 #include "misc.h"
-#include "lockfree_queue.hpp"
+#include "queue.h"
 #include <SDL2/SDL.h>
 #include <chrono>
 
@@ -32,7 +32,7 @@ struct Event {
     double srcAngle;
 };
 
-enum ActionType{ kickLeft, kickRight, kickBoth };
+enum ActionType{ none=0, kickLeft, kickRight, kickBoth };
 
 struct Action {
     std::chrono::high_resolution_clock::time_point time;
@@ -48,9 +48,12 @@ class Life {
 public:
     Circle circle; // TODO: make this private
 
-    Life(): health(10.0), circle(100,100,10), velocity(10,10), angle(0) { 
+    Life(): health(10.0), circle(10,10,10), velocity(10,10), angle(10) { 
         color.r = color.g = color.b = 255;
         color.a = SDL_ALPHA_OPAQUE;
+// TODO: debugging:
+        circle.center.x = rand()%700;
+        circle.center.y = rand()%700;
     }
     Life(const Life& other): health(other.health), color(other.color), circle(other.circle), velocity(other.velocity), angle(other.angle) {}
     Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), velocity(std::move(other.velocity)), angle(other.angle) {}
