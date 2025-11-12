@@ -79,7 +79,7 @@ void Game::draw(SDL_Renderer* rend){
     e.event = EventType::wave;
     for (Life& life: lives) {
         for (const Wave& wave: waves) {
-            if( life.circle.checkCollision(wave.circle) ){
+            if( life.circle.checkCollision(wave.circle) && !wave.circle.inside(life.circle) ){
                 life.event(e);
             }
         }

@@ -70,4 +70,8 @@ struct Circle {
     bool checkCollision(const Circle& b) const {
         return distance(b) <= (radius + b.radius);
     }
+
+    bool inside(const Circle& b) const {
+        return distance(b) <= (radius - b.radius);
+    }
 };

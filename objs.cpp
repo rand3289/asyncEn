@@ -1,5 +1,6 @@
 #include "objs.h"
 #include "game.h"
+#include <iostream>
 
 
 Wave& Wave::operator=(const Wave& other) {
@@ -30,7 +31,13 @@ void Life::draw(SDL_Renderer* rend){
     circle.draw(rend);
 }
 
-void Life::event(const Event& e){}
+void Life::event(const Event& e){
+    switch(e.event){
+        case EventType::collision: std::cout << "x"; break;
+        case EventType::wave: std::cout << "_"; break;
+    }
+    std::cout.flush();
+}
 
 void Life::action(const Action& a){
     actQ.enqueue(a);
