@@ -48,7 +48,7 @@ class Life {
 public:
     Circle circle; // TODO: make this private
 
-    Life(): health(10.0), circle(10,10,10), velocity(10,10), angle(10) { 
+    Life(): health(10.0), circle(10,10,5), velocity(10,10), angle(10) { 
         color.r = color.g = color.b = 255;
         color.a = SDL_ALPHA_OPAQUE;
 // TODO: debugging:

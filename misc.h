@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 
+#define RADIAN (180.0/M_PI)
 
 struct Point2D {
     double x,y;
@@ -18,7 +19,8 @@ struct Point2D {
     Point2D translate(const Point2D& p) const { return Point2D(x+p.x, y+p.y); }
 
     // https://www.siggraph.org/education/materials/HyperGraph/modeling/mod_tran/3drota.htm
-    Point2D rotate(const double a) const { // rotate around z axis
+    Point2D rotate(double a) const { // rotate around z axis
+        a /= RADIAN; // convert to radians
         const double sa = sin(a);
         const double ca = cos(a);
         return Point2D( x*ca-y*sa, y*ca+x*sa );

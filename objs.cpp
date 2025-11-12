@@ -41,6 +41,13 @@ void Life::move(){
     if( actQ.dequeue(a) ){
         Game& game = Game::getInstance();
         game.addWave(color, circle.center);
+        switch(a.action){
+            case ActionType::kickLeft:  angle-=10.0; break;
+            case ActionType::kickRight: angle+=10.0; break;
+            case ActionType::kickBoth: break;
+            default: return;
+        }
+        circle.center = circle.center.translate( Point2D(5.0,0).rotate(angle) );
     }
 }
 
