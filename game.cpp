@@ -99,10 +99,8 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     for (Life& life: lives) {
         for (const WallWave& wave: wallWaves) {
             if(wave.checkCollision(life.circle)){
-// TODO: implement
-//                double angle = life.circle.center.angle(wave.circle.center);
-//                e.srcAngle = angle;
-//                life.event(e);
+                e.srcAngle = wave.getCollisionAngle(life.getAngle());
+                life.event(e);
             }
         }
     }

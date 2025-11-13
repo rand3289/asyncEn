@@ -23,6 +23,7 @@ public:
     void move();
     double getHealth() const { return r+g+b; }
     bool checkCollision(const Circle& circle) const;
+    double getCollisionAngle(double angle) const;
 };
 
 

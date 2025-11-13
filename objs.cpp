@@ -35,6 +35,7 @@ void WallWave::move(){
 }
 
 
+// check collision of a WallWave and Life
 bool WallWave::checkCollision(const Circle& circle) const {
     switch(type){
         case WallWaveType::horisontal_down:
@@ -45,6 +46,23 @@ bool WallWave::checkCollision(const Circle& circle) const {
             return (loc <= circle.center.x+circle.radius) && (loc >= circle.center.x-circle.radius);
     }
     return false;
+}
+
+
+// this is the collision angle from the point of view of Life
+double WallWave::getCollisionAngle(double angle) const {
+    const double NIENTY = 90; // TODO: check if it is in RADIANS
+    switch(type){
+        case WallWaveType::horisontal_down:
+            return NIENTY-angle;
+        case WallWaveType::horisontal_up:
+            return NIENTY+angle;
+        case WallWaveType::vertical_left:
+            return -angle;
+        case WallWaveType::vertical_right:
+            return angle;
+    }
+    return 0.0;
 }
 
 
