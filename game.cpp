@@ -62,7 +62,7 @@ void Game::draw(SDL_Renderer* rend){
     nextTime += frameTime;
 
     // check collisions among lives
-    Event e = {time, EventType::collision, 0.0};
+    Event e = {EventType::collision, time, 0.0};
     for (size_t i = 0; i < lives.size(); ++i) {
         for (size_t j = i + 1; j < lives.size(); ++j) {
             if ( lives[i].circle.checkCollision(lives[j].circle) ) {
@@ -86,7 +86,9 @@ void Game::draw(SDL_Renderer* rend){
     }
 
     for(int i=0; i < lives.size(); ++i){
-        if(lives[i].getHealth() <=0){
+        if(lives[i].getHealth() <= 0){
+            e.event = EventType::death;
+            lives[i].event(e);
             lives.erase(lives.begin() + i);
             --i;
             continue;
@@ -96,7 +98,7 @@ void Game::draw(SDL_Renderer* rend){
     }
 
     for(int i=0; i< waves.size(); ++i){
-        if( waves[i].isGone() ){ // remove waves that have dissipated
+        if(waves[i].getHealth() <= 0){ // remove waves that have dissipated
             waves.erase(waves.begin() + i);
             --i;
             continue;

@@ -16,39 +16,41 @@ public:
     Wave(SDL_Color rgb, double x, double y, double radius): r(rgb.r), g(rgb.g), b(rgb.b), circle(x,y,radius) {}
     Wave(const Wave& other): r(other.r), g(other.g), b(other.b), circle(other.circle) {}
     Wave(Wave&& other) noexcept: r(other.r), g(other.g), b(other.b), circle(std::move(other.circle)) {}
-
     Wave& operator=(const Wave& other);
+
     void draw(SDL_Renderer* rend);
     void move();
-    bool isGone() { return r<=0 && g<=0 && b<=0; }
+    double getHealth() { return r+g+b; }
 };
 
 
-enum EventType{collision, wave};
+enum EventType{collision, wave, death};
 
 struct Event {
-    std::chrono::high_resolution_clock::time_point time;
     EventType event;
+    std::chrono::high_resolution_clock::time_point time;
     double srcAngle;
 };
 
 enum ActionType{ none=0, kickLeft, kickRight, kickBoth };
 
 struct Action {
-    std::chrono::high_resolution_clock::time_point time;
     ActionType action;
+    std::chrono::high_resolution_clock::time_point time;
 };
+
 
 class Life {
     double health;
     SDL_Color color;
     Point2D velocity;
     double angle;
-    LockFreeQueue<Action> actQ; // agent's brain runs on a different thread
+    LockFreeQueue<Action> actQ; // brain runs on a different thread.  This could change to a network connection
+    LockFreeQueue<Event> eventQ;
 public:
     Circle circle; // TODO: make this private
 
-    Life(): health(10.0), circle(10,10,5), velocity(10,10), angle(10) { 
+    Life(): health(10.0), velocity(10,10), angle(10), circle(10,10,5) {
         color.r = color.g = color.b = 255;
         color.a = SDL_ALPHA_OPAQUE;
 // TODO: debugging:
@@ -61,7 +63,7 @@ public:
 
     void draw(SDL_Renderer* rend); // draws on screen ONLY!
     void move();                   // calculates position, velocity, orientation
-    void action(const Action& a);  // agent wants to perform this action (eg: kick left, kick right)
-    void event(const Event& e);    // collision, wave, health increase or decrease.
     double getHealth(){ return health; }
+    void action(const Action& a);  // agent wants to perform this action (eg: kick left, kick right)
+    void event(const Event& e);    // collision, wave, health increase or decrease. // TODO: accept parameters instead of a a constructed event
 };
