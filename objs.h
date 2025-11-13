@@ -19,9 +19,10 @@ public:
     WallWave(WallWave&& other) noexcept: r(other.r), g(other.g), b(other.b), loc(other.loc), type(other.type) {}
     WallWave& operator=(const WallWave& other);
 
-    void draw(SDL_Renderer* rend, int width, int height);
+    void draw(SDL_Renderer* rend, int width, int height) const;
     void move();
-    double getHealth() { return r+g+b; }
+    double getHealth() const { return r+g+b; }
+    bool checkCollision(const Circle& circle) const;
 };
 
 
@@ -37,9 +38,9 @@ public:
     Wave(Wave&& other) noexcept: r(other.r), g(other.g), b(other.b), circle(std::move(other.circle)) {}
     Wave& operator=(const Wave& other);
 
-    void draw(SDL_Renderer* rend);
+    void draw(SDL_Renderer* rend) const;
     void move();
-    double getHealth() { return r+g+b; }
+    double getHealth() const { return r+g+b; }
 };
 
 
@@ -79,11 +80,11 @@ public:
     Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), velocity(std::move(other.velocity)), angle(other.angle) {}
     Life& operator=(const Life& other);
 
-    void draw(SDL_Renderer* rend); // draws on screen ONLY!
+    void draw(SDL_Renderer* rend) const; // draws on screen ONLY!
     void move();                   // calculates things
-    double getHealth(){ return health; }
+    double getHealth() const { return health; }
 
-    double getAngle(){ return angle; }
+    double getAngle() const { return angle; }
     void action(const Action& a);  // agent wants to perform this action (eg: kick left, kick right)
     // TODO: accept parameters instead of a a constructed event here:
     void event(const Event& e);    // collision, wave, etc...

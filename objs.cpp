@@ -1,9 +1,9 @@
 #include "objs.h"
-#include "game.h"
-#include <iostream>
+#include "game.h"   // Game::getInstance()
+#include <iostream> // for debugging
 
 
-void WallWave::draw(SDL_Renderer* rend, int width, int height){
+void WallWave::draw(SDL_Renderer* rend, int width, int height) const {
     Point2D p1, p2;
     switch(type){
         case WallWaveType::horisontal_down:
@@ -35,6 +35,19 @@ void WallWave::move(){
 }
 
 
+bool WallWave::checkCollision(const Circle& circle) const {
+    switch(type){
+        case WallWaveType::horisontal_down:
+        case WallWaveType::horisontal_up:
+            return (loc <= circle.center.y+circle.radius) && (loc >= circle.center.y-circle.radius);
+        case WallWaveType::vertical_left:
+        case WallWaveType::vertical_right:
+            return (loc <= circle.center.x+circle.radius) && (loc >= circle.center.x-circle.radius);
+    }
+    return false;
+}
+
+
 WallWave& WallWave::operator=(const WallWave& other) {
     if (this != &other) {
         r = other.r;
@@ -57,7 +70,7 @@ Wave& Wave::operator=(const Wave& other) {
     return *this;
 }
 
-void Wave::draw(SDL_Renderer* rend) {
+void Wave::draw(SDL_Renderer* rend) const {
     SDL_SetRenderDrawColor(rend, r, g, b, SDL_ALPHA_OPAQUE);
     circle.draw(rend);
 }
@@ -70,17 +83,16 @@ void Wave::move() {
 }
 
 
-void Life::draw(SDL_Renderer* rend){
+void Life::draw(SDL_Renderer* rend) const {
     SDL_SetRenderDrawColor(rend, color.r, color.g, color.b, SDL_ALPHA_OPAQUE);
     circle.draw(rend);
 }
 
 void Life::event(const Event& e){
     switch(e.event){
-        case EventType::collision: std::cout << "x"; break;
-        case EventType::wave: std::cout << "_"; break;
+        case EventType::collision: break;
+        case EventType::wave: break;
     }
-    std::cout.flush();
 }
 
 void Life::action(const Action& a){
