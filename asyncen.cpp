@@ -4,9 +4,10 @@
 #include <iostream>
 #include <string>
 
-void toggleFS(SDL_Window* win){
+void toggleFS(SDL_Window* win, int* width, int* height){
     bool fs = SDL_GetWindowFlags(win) & SDL_WINDOW_FULLSCREEN;
     SDL_SetWindowFullscreen(win, fs ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP);
+    SDL_GetWindowSize(win, width, height);
 }
 
 void exitSDLerr(){
@@ -21,12 +22,13 @@ int main(int argc, char* argv[]){
     const int WINPOS = SDL_WINDOWPOS_CENTERED;
 
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 ) { exitSDLerr(); }
-
     SDL_Window* window=SDL_CreateWindow("asyncEn", WINPOS, WINPOS, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
     if(0==window){ exitSDLerr(); }
     SDL_Renderer * renderer = SDL_CreateRenderer(window, -1, 0);
     if(0==renderer){ exitSDLerr(); }
-//    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP); // SDL_WINDOW_FULLSCREEN for different resolution
+    int width, height;
+    SDL_GetWindowSize(window, &width, &height);
+//    toggleFS(window, &width, &height);
 
     Game& game = Game::getInstance();
     SDL_Event e;
@@ -36,7 +38,7 @@ int main(int argc, char* argv[]){
             if(e.type == SDL_QUIT){ run=false; }
             else if(e.type == SDL_KEYUP ){
                 switch(e.key.keysym.sym){
-                    case SDLK_RETURN: toggleFS(window); break;
+                    case SDLK_RETURN: toggleFS(window, &width, &height); break;
                     case SDLK_ESCAPE: run=false;        break;
                     default:                            break;
                 }
@@ -49,9 +51,8 @@ int main(int argc, char* argv[]){
         SDL_RenderClear(renderer);
         SDL_SetRenderDrawBlendMode(renderer,SDL_BLENDMODE_ADD);
 
-        game.draw(renderer);
+        game.draw(renderer, width, height);
         SDL_RenderPresent(renderer);
-//        SDL_Delay( 16 ); // less than 60fps
     }
 
     SDL_DestroyRenderer(renderer);

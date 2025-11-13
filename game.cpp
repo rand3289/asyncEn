@@ -6,7 +6,6 @@
 #include "misc.h"
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 #include <iostream>
-#include <string>
 #include <chrono>
 #include <thread> // sleep_for()
 
@@ -16,17 +15,6 @@ Game& Game::getInstance() {
     return instance;
 }
 
-// TODO: get width/height in asyncen.cpp and pass it to Game::draw()
-void Game::getDisplay(){
-    SDL_DisplayMode dm;
-    SDL_GetCurrentDisplayMode(0, &dm);
-    width = dm.w;
-    height = dm.h;
-}
-
-Game::Game(){
-    getDisplay();
-}
 
 void Game::addWave(const SDL_Color& color, const Point2D& p){
     waves.emplace_back(color, p.x, p.y, 1); 
@@ -41,7 +29,6 @@ void Game::event(SDL_Event& e){
             case SDLK_RIGHT:  a.action = ActionType::kickRight; break;
             case SDLK_UP:     a.action = ActionType::kickBoth;  break;
             case SDLK_DOWN:   lives.emplace_back(); return;
-            case SDLK_RETURN: getDisplay(); return;
             default: return;
         }
         for(Life& life: lives){
@@ -50,8 +37,7 @@ void Game::event(SDL_Event& e){
     }
 }
 
-// TODO: change the way things work because going full screen will mess up width and height
-void Game::draw(SDL_Renderer* rend){
+void Game::draw(SDL_Renderer* rend, int width, int height){
     const int fps = 60;
     const auto frameTime = std::chrono::milliseconds(1000/fps);
 
