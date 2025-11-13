@@ -61,15 +61,38 @@ void Game::draw(SDL_Renderer* rend){
     }
     nextTime += frameTime;
 
-    // check collisions among lives
     Event e = {EventType::collision, time, 0.0};
+    // check collisions with the walls
+    // TODO: change the way things work because going full screen will mess up width and height
+    for(Life& life: lives){
+        if(life.circle.center.x <= 0){
+            life.circle.center.x = life.circle.radius;
+            e.srcAngle = 180-life.getAngle();
+            wallWaves.emplace_back(0, WallWaveType::vertical_right);
+        } else if (life.circle.center.x >= width){
+            life.circle.center.x = width-life.circle.radius;
+            e.srcAngle = -life.getAngle();
+            wallWaves.emplace_back(width, WallWaveType::vertical_left);
+        } else if (life.circle.center.y <= 0){
+            life.circle.center.y = life.circle.radius;
+            e.srcAngle = 90-life.getAngle();
+            wallWaves.emplace_back(0, WallWaveType::horisontal_up);
+        } else if(life.circle.center.y >= width){
+            life.circle.center.y = height-life.circle.radius;
+            e.srcAngle = -90-life.getAngle();
+            wallWaves.emplace_back(height, WallWaveType::horisontal_up);
+        } else { continue; }
+        life.event(e);
+    }
+
+    // TODO: set lives back from each other when they collide
+    // check collisions among lives
     for (size_t i = 0; i < lives.size(); ++i) {
         for (size_t j = i + 1; j < lives.size(); ++j) {
             if ( lives[i].circle.checkCollision(lives[j].circle) ) {
-                double angle = lives[i].circle.center.angle(lives[j].circle.center);
-                e.srcAngle = angle;
+                e.srcAngle = lives[i].circle.center.angle(lives[j].circle.center);
                 lives[i].event(e);
-                e.srcAngle = angle+180;
+                e.srcAngle += 180;
                 lives[j].event(e);
             }
         }
@@ -80,14 +103,25 @@ void Game::draw(SDL_Renderer* rend){
     for (Life& life: lives) {
         for (const Wave& wave: waves) {
             if( life.circle.checkCollision(wave.circle) && !wave.circle.inside(life.circle) ){
+                e.srcAngle = life.circle.center.angle(wave.circle.center);
                 life.event(e);
             }
         }
     }
 
+    for (Life& life: lives) {
+        for (const WallWave& wave: wallWaves) {
+//            if( life.circle.checkCollision(wave.circle) ){
+//                double angle = life.circle.center.angle(wave.circle.center);
+//                e.srcAngle = angle;
+//                life.event(e);
+//            }
+        }
+    }
+
+    e.event = EventType::death;
     for(int i=0; i < lives.size(); ++i){
         if(lives[i].getHealth() <= 0){
-            e.event = EventType::death;
             lives[i].event(e);
             lives.erase(lives.begin() + i);
             --i;
@@ -106,4 +140,14 @@ void Game::draw(SDL_Renderer* rend){
         waves[i].draw(rend);
         waves[i].move();
     }
-}
+
+    for(int i=0; i< wallWaves.size(); ++i){
+        if(wallWaves[i].getHealth() <= 0){ // remove waves that have dissipated
+            wallWaves.erase(wallWaves.begin() + i);
+            --i;
+            continue;
+        }
+        wallWaves[i].draw(rend, width, height);
+        wallWaves[i].move();
+    }
+} // Game::draw()

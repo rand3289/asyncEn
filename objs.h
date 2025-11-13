@@ -4,11 +4,23 @@
 #include <SDL2/SDL.h>
 #include <chrono>
 
+enum WallWaveType{ vertical_right, vertical_left, horisontal_up, horisontal_down};
+class WallWave {
+    const double waveSpeed = 1.0;
+    const double fadeSpeed = 2.0;
+    double r,g,b; // SDL_FColor color; // floating point r,g,b available since SDL 3.2.0.
+    double loc;
+    WallWaveType type;
+public:
+    WallWave(double location, WallWaveType typE): r(255), g(255), b(255), loc(location), type(typE) {}
+    void draw(SDL_Renderer* rend, int width, int height);
+    void move();
+    double getHealth() { return r+g+b; }
+};
 
 class Wave {
     const double waveSpeed = 1.0;
     const double fadeSpeed = 2.0;
-
     double r,g,b; // SDL_FColor color; // floating point r,g,b available since SDL 3.2.0.
 public:
     Circle circle; // TODO: make this private
@@ -66,4 +78,5 @@ public:
     double getHealth(){ return health; }
     void action(const Action& a);  // agent wants to perform this action (eg: kick left, kick right)
     void event(const Event& e);    // collision, wave, health increase or decrease. // TODO: accept parameters instead of a a constructed event
+    double getAngle(){ return angle; }
 };

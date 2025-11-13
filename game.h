@@ -7,6 +7,7 @@
 class Game {
     double width;
     double height;
+    std::vector<WallWave> wallWaves;
     std::vector<Wave> waves;
     std::vector<Life> lives;
 

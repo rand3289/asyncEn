@@ -3,6 +3,37 @@
 #include <iostream>
 
 
+void WallWave::draw(SDL_Renderer* rend, int width, int height){
+    Point2D p1, p2;
+    switch(type){
+        case WallWaveType::horisontal_down:
+        case WallWaveType::horisontal_up:
+            p2.x = width;
+            p1.y = p2.y = loc;
+            break;
+        case WallWaveType::vertical_left:
+        case WallWaveType::vertical_right:
+            p1.x = p2.x = loc;
+            p2.y = height;
+            break;
+    }
+    line(rend, p1, p2);
+}
+
+
+void WallWave::move(){
+    switch(type){
+        case WallWaveType::horisontal_down: loc-=waveSpeed; break;
+        case WallWaveType::horisontal_up:   loc+=waveSpeed; break;
+        case WallWaveType::vertical_left:   loc-=waveSpeed; break;
+        case WallWaveType::vertical_right:  loc+=waveSpeed; break;
+    }
+    r = r>fadeSpeed ? r-fadeSpeed : 0.0;
+    g = g>fadeSpeed ? g-fadeSpeed : 0.0;
+    b = b>fadeSpeed ? b-fadeSpeed : 0.0;
+}
+
+
 Wave& Wave::operator=(const Wave& other) {
     if (this != &other) {
         r = other.r;
