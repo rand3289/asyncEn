@@ -27,8 +27,7 @@ int main(int argc, char* argv[]){
     SDL_Renderer * renderer = SDL_CreateRenderer(window, -1, 0);
     if(0==renderer){ exitSDLerr(); }
     int width, height;
-    SDL_GetWindowSize(window, &width, &height);
-//    toggleFS(window, &width, &height);
+    SDL_GetWindowSize(window, &width, &height); // toggleFS(window, &width, &height);
 
     Game& game = Game::getInstance();
     SDL_Event e;
@@ -37,10 +36,10 @@ int main(int argc, char* argv[]){
         while( SDL_PollEvent( &e ) ){
             if(e.type == SDL_QUIT){ run=false; }
             else if(e.type == SDL_KEYUP ){
-                switch(e.key.keysym.sym){
+                switch(e.key.keysym.sym){ // enter - toggle full screen,  escape - quit
                     case SDLK_RETURN: toggleFS(window, &width, &height); break;
-                    case SDLK_ESCAPE: run=false;        break;
-                    default:                            break;
+                    case SDLK_ESCAPE: run=false; break;
+                    default:                     break;
                 }
             }
             game.event(e);

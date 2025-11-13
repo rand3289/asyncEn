@@ -5,7 +5,7 @@
 #include "game.h"
 #include "misc.h"
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
-#include <iostream>
+#include <iostream> // for debugging
 #include <chrono>
 #include <thread> // sleep_for()
 
@@ -37,20 +37,20 @@ void Game::event(SDL_Event& e){
     }
 }
 
+
 void Game::draw(SDL_Renderer* rend, int width, int height){
     const int fps = 60;
     const auto frameTime = std::chrono::milliseconds(1000/fps);
-
-    static std::chrono::high_resolution_clock::time_point nextTime = std::chrono::high_resolution_clock::now();
+    static auto nextTime = std::chrono::high_resolution_clock::now();
     auto time = std::chrono::high_resolution_clock::now();
 
-    if(time < nextTime){
+    if(time < nextTime){ // this makes sure framerate (FPS) is steady
         std::this_thread::sleep_for(nextTime-time);
     }
     nextTime += frameTime;
 
     Event e = {EventType::collision, time, 0.0};
-    // check collisions with the walls
+    // check collisions with walls
     for(Life& life: lives){
         if(life.circle.center.x <= 0){
             life.circle.center.x = life.circle.radius;
@@ -91,14 +91,14 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
         for (const Wave& wave: waves) {
             if( life.circle.checkCollision(wave.circle) && !wave.circle.inside(life.circle) ){
                 e.srcAngle = life.circle.center.angle(wave.circle.center);
-                life.event(e);
+                life.event(e); // waves don't get events
             }
         }
     }
 
     for (Life& life: lives) {
         for (const WallWave& wave: wallWaves) {
-// TODO:
+// TODO: implement wallWave collisions
 //            if( life.circle.checkCollision(wave.circle) ){
 //                double angle = life.circle.center.angle(wave.circle.center);
 //                e.srcAngle = angle;
@@ -108,6 +108,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     }
 
     e.event = EventType::death;
+    // draw and move lives or delete them if health < 0
     for(int i=0; i < lives.size(); ++i){
         if(lives[i].getHealth() <= 0){
             lives[i].event(e);
@@ -119,6 +120,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
         lives[i].move();
     }
 
+    // draw and move waves or delete them if health < 0
     for(int i=0; i< waves.size(); ++i){
         if(waves[i].getHealth() <= 0){ // remove waves that have dissipated
             waves.erase(waves.begin() + i);
@@ -129,6 +131,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
         waves[i].move();
     }
 
+    // draw and move waves from the walls or delete them if health < 0
     for(int i=0; i< wallWaves.size(); ++i){
         if(wallWaves[i].getHealth() <= 0){ // remove waves that have dissipated
             wallWaves.erase(wallWaves.begin() + i);

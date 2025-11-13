@@ -97,7 +97,8 @@ void Life::move(){
             default: return;
         }
         circle.center = circle.center.translate( Point2D(5.0,0).rotate(angle) );
-        Game& game = Game::getInstance(); // TODO: this could be replaced by returning true/false and performing this operation in Game::draw()
+        // TODO: this could be replaced by returning true/false and performing this operation in Game::draw()
+        Game& game = Game::getInstance();
         game.addWave(color, circle.center);
     }
 }
