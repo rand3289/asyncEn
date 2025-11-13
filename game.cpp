@@ -112,6 +112,7 @@ void Game::draw(SDL_Renderer* rend){
 
     for (Life& life: lives) {
         for (const WallWave& wave: wallWaves) {
+// TODO:
 //            if( life.circle.checkCollision(wave.circle) ){
 //                double angle = life.circle.center.angle(wave.circle.center);
 //                e.srcAngle = angle;

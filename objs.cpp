@@ -17,6 +17,7 @@ void WallWave::draw(SDL_Renderer* rend, int width, int height){
             p2.y = height;
             break;
     }
+    SDL_SetRenderDrawColor(rend, r, g, b, SDL_ALPHA_OPAQUE);
     line(rend, p1, p2);
 }
 
