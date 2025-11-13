@@ -16,6 +16,7 @@ Game& Game::getInstance() {
     return instance;
 }
 
+// TODO: get width/height in asyncen.cpp and pass it to Game::draw()
 void Game::getDisplay(){
     SDL_DisplayMode dm;
     SDL_GetCurrentDisplayMode(0, &dm);
@@ -36,11 +37,12 @@ void Game::event(SDL_Event& e){
     if(e.type == SDL_KEYDOWN){
         Action a = {.action = ActionType::none };
         switch(e.key.keysym.sym){
-            case SDLK_RETURN: getDisplay(); break;
             case SDLK_LEFT:   a.action = ActionType::kickLeft;  break;
             case SDLK_RIGHT:  a.action = ActionType::kickRight; break;
             case SDLK_UP:     a.action = ActionType::kickBoth;  break;
-            case SDLK_DOWN:   lives.emplace_back(); break;
+            case SDLK_DOWN:   lives.emplace_back(); return;
+            case SDLK_RETURN: getDisplay(); return;
+            default: return;
         }
         for(Life& life: lives){
             life.action(a);
@@ -48,7 +50,7 @@ void Game::event(SDL_Event& e){
     }
 }
 
-
+// TODO: change the way things work because going full screen will mess up width and height
 void Game::draw(SDL_Renderer* rend){
     const int fps = 60;
     const auto frameTime = std::chrono::milliseconds(1000/fps);
@@ -63,7 +65,6 @@ void Game::draw(SDL_Renderer* rend){
 
     Event e = {EventType::collision, time, 0.0};
     // check collisions with the walls
-    // TODO: change the way things work because going full screen will mess up width and height
     for(Life& life: lives){
         if(life.circle.center.x <= 0){
             life.circle.center.x = life.circle.radius;
@@ -76,8 +77,8 @@ void Game::draw(SDL_Renderer* rend){
         } else if (life.circle.center.y <= 0){
             life.circle.center.y = life.circle.radius;
             e.srcAngle = 90-life.getAngle();
-            wallWaves.emplace_back(0, WallWaveType::horisontal_up);
-        } else if(life.circle.center.y >= width){
+            wallWaves.emplace_back(0, WallWaveType::horisontal_down);
+        } else if(life.circle.center.y >= height){
             life.circle.center.y = height-life.circle.radius;
             e.srcAngle = -90-life.getAngle();
             wallWaves.emplace_back(height, WallWaveType::horisontal_up);

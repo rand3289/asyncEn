@@ -23,14 +23,26 @@ void WallWave::draw(SDL_Renderer* rend, int width, int height){
 
 void WallWave::move(){
     switch(type){
-        case WallWaveType::horisontal_down: loc-=waveSpeed; break;
-        case WallWaveType::horisontal_up:   loc+=waveSpeed; break;
+        case WallWaveType::horisontal_down: loc+=waveSpeed; break;
+        case WallWaveType::horisontal_up:   loc-=waveSpeed; break;
         case WallWaveType::vertical_left:   loc-=waveSpeed; break;
         case WallWaveType::vertical_right:  loc+=waveSpeed; break;
     }
     r = r>fadeSpeed ? r-fadeSpeed : 0.0;
     g = g>fadeSpeed ? g-fadeSpeed : 0.0;
     b = b>fadeSpeed ? b-fadeSpeed : 0.0;
+}
+
+
+WallWave& WallWave::operator=(const WallWave& other) {
+    if (this != &other) {
+        r = other.r;
+        g = other.g;
+        b = other.b;
+        loc = other.loc;
+        type = other.type;
+    }
+    return *this;
 }
 
 
@@ -77,8 +89,6 @@ void Life::action(const Action& a){
 void Life::move(){
     Action a;
     if( actQ.dequeue(a) ){
-        Game& game = Game::getInstance();
-        game.addWave(color, circle.center);
         switch(a.action){
             case ActionType::kickLeft:  angle-=10.0; break;
             case ActionType::kickRight: angle+=10.0; break;
@@ -86,6 +96,8 @@ void Life::move(){
             default: return;
         }
         circle.center = circle.center.translate( Point2D(5.0,0).rotate(angle) );
+        Game& game = Game::getInstance(); // TODO: this could be replaced by returning true/false and performing this operation in Game::draw()
+        game.addWave(color, circle.center);
     }
 }
 

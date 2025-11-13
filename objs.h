@@ -13,6 +13,9 @@ class WallWave {
     WallWaveType type;
 public:
     WallWave(double location, WallWaveType typE): r(255), g(255), b(255), loc(location), type(typE) {}
+    WallWave(const WallWave& other): r(other.r), g(other.g), b(other.b), loc(other.loc), type(other.type) {}
+    WallWave(WallWave&& other) noexcept: r(other.r), g(other.g), b(other.b), loc(other.loc), type(other.type) {}
+    WallWave& operator=(const WallWave& other);
     void draw(SDL_Renderer* rend, int width, int height);
     void move();
     double getHealth() { return r+g+b; }
