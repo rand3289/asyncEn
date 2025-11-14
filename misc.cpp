@@ -20,13 +20,10 @@ void drawCircle(SDL_Renderer* renderer, int32_t centreX, int32_t centreY, int32_
 
         if (err <= 0){
   	        ++y;
-  	        err += 2*y+1;
-        }
-        if (err > 0){
+  	        err += y;
+        } else {
   	        --x;
-  	        err -= 2*x+1;
+  	        err -= x;
         }
     }
 }
-
-
