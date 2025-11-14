@@ -72,7 +72,6 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
         life.event(e);
     }
 
-    // TODO: set lives back from each other when they collide
     // check collisions among lives
     for (size_t i = 0; i < lives.size(); ++i) {
         for (size_t j = i + 1; j < lives.size(); ++j) {
@@ -81,6 +80,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
                 lives[i].event(e);
                 e.srcAngle += 180;
                 lives[j].event(e);
+                lives[i].circle.pushApart(lives[j].circle); // push collided lives apart
             }
         }
     }

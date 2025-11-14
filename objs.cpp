@@ -118,6 +118,8 @@ void Life::action(const Action& a){
 }
 
 void Life::move(){
+    static Game& game = Game::getInstance();
+    static const Point2D unitVector(5.0, 0);
     Action a;
     if( actQ.dequeue(a) ){
         switch(a.action){
@@ -126,10 +128,9 @@ void Life::move(){
             case ActionType::kickBoth: break;
             default: return;
         }
-        circle.center = circle.center.translate( Point2D(5.0,0).rotate(angle) );
-        // TODO: this could be replaced by returning true/false and performing this operation in Game::draw()
-        Game& game = Game::getInstance();
-        game.addWave(color, circle.center);
+        // create a "unit vector", rotate it by angle, translate position using unit vector
+        circle.center = circle.center.translate( unitVector.rotate(angle) );
+        game.addWave(color, circle.center); // every movement kicks up a wave
     }
 }
 

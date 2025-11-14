@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 
-#define RADIAN (180.0/M_PI)
+#define RADIAN (180.0/M_PI) // degrees in one radian
 
 struct Point2D {
     double x,y;
@@ -33,7 +33,7 @@ struct Point2D {
     }
 
     double angle(const Point2D& rhs) const {
-        return  (180.0/M_PI) * atan2(rhs.y - y, rhs.x - x);
+        return  RADIAN * atan2(rhs.y - y, rhs.x - x);
     }
 };
 
@@ -63,6 +63,7 @@ struct Circle {
         drawCircle(rend,center.x, center.y, radius);
     }
 
+    // distance between CIRCUMFERENCES (not centers)
     double distance(const Circle& rhs) const {
         return center.distance(rhs.center) - (radius+rhs.radius);
     }
@@ -73,5 +74,15 @@ struct Circle {
 
     bool inside(const Circle& b) const {
         return distance(b) <= (radius - b.radius);
+    }
+
+    // push two circles apart after a collision
+    void pushApart(Circle& b) {
+        double angle = center.angle(b.center);
+        double delta = (radius + b.radius - distance(b)) / 1.99; // almost half :)
+        Point2D moveBy = Point2D(delta, 0).rotate(angle);
+        center.translate(moveBy);
+        Point2D moveBy2 = moveBy.rotate(180);
+        b.center.translate(moveBy2);
     }
 };
