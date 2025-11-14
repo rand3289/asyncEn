@@ -3,7 +3,7 @@
 // entities look like tubers in a lazy river
 
 #include "game.h"
-#include "misc.h"
+#include "geometry.h"
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 #include <iostream> // for debugging
 #include <chrono>

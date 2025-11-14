@@ -1,5 +1,5 @@
 #pragma once
-#include "objs.h"
+#include "objects.h"
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 #include <vector>
 

@@ -1,2 +1,2 @@
 all:
-	g++ -g asyncen.cpp game.cpp misc.cpp objs.cpp -o asyncen -lSDL2
+	g++ -g asyncen.cpp game.cpp objects.cpp geometry.cpp -o asyncen -lSDL2

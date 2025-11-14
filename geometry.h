@@ -76,6 +76,7 @@ struct Circle {
         return distance(b) <= (radius - b.radius);
     }
 
+//TODO: debug me.  There is a bug that pushes spheres too far apart
     // push two circles apart after a collision
     void pushApart(Circle& b) {
         double angle = center.angle(b.center);

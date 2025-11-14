@@ -1,4 +1,4 @@
-#include "objs.h"
+#include "objects.h"
 #include "game.h"   // Game::getInstance()
 #include <iostream> // for debugging
 
