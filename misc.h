@@ -26,14 +26,14 @@ struct Point2D {
         return Point2D( x*ca-y*sa, y*ca+x*sa );
     }
 
+    double angle(const Point2D& rhs) const {
+        return  RADIAN * atan2(y-rhs.y, x-rhs.x);
+    }
+
     double distance(const Point2D& rhs) const {
         double dx = x - rhs.x;
         double dy = y - rhs.y;
         return sqrt(dx*dx + dy*dy);
-    }
-
-    double angle(const Point2D& rhs) const {
-        return  RADIAN * atan2(rhs.y - y, rhs.x - x);
     }
 };
 
@@ -80,9 +80,9 @@ struct Circle {
     void pushApart(Circle& b) {
         double angle = center.angle(b.center);
         double delta = (radius + b.radius - distance(b)) / 1.99; // almost half :)
-        Point2D moveBy = Point2D(delta, 0).rotate(angle);
-        center.translate(moveBy);
-        Point2D moveBy2 = moveBy.rotate(180);
-        b.center.translate(moveBy2);
+        Point2D moveBy = Point2D(abs(delta), 0).rotate(angle);
+        center = center.translate(moveBy);
+        moveBy = moveBy.rotate(180);
+        b.center = b.center.translate(moveBy);
     }
 };
