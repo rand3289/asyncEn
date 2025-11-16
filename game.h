@@ -8,6 +8,7 @@ class Game {
     std::vector<WallWave> wallWaves;
     std::vector<Wave> waves;
     std::vector<Life> lives;
+    void cleanupWaves();
 public:
     static Game& getInstance();
     void event(SDL_Event& e);
