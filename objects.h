@@ -37,6 +37,7 @@ class Wave {
 public:
     Circle circle; // TODO: make this private
 
+    Wave(): r(0), g(0), b(0), circle(0,0,0) { };
     Wave(SDL_Color rgb, double x, double y, double radius): r(rgb.r), g(rgb.g), b(rgb.b), circle(x,y,radius) {}
     Wave(const Wave& other): r(other.r), g(other.g), b(other.b), circle(other.circle) {}
     Wave(Wave&& other) noexcept: r(other.r), g(other.g), b(other.b), circle(std::move(other.circle)) {}

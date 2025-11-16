@@ -23,20 +23,31 @@ void Game::addWave(const SDL_Color& color, const Point2D& p){
 
 
 // reduce the number of waves in the system to level framerate
-void Game::cleanupWaves(){
+void Game::cleanupWaves(std::chrono::high_resolution_clock::time_point& time){
+//    std::cout << std::dec << std::endl << "L=" << lives.size() << ",w=" << waves.size() << ",W="<< wallWaves.size() << "  ";
+//    auto temp = std::chrono::high_resolution_clock::now();
+
+    // prevent cleanup two frames in a row
+//    static auto lastTime = std::chrono::high_resolution_clock::now();
+//    if(time-lastTime < std::chrono::milliseconds(128)){ return; }
+
     std::sort(wallWaves.begin(), wallWaves.end()); // by type and location
 
     for(auto it = wallWaves.begin(); it != wallWaves.end() && (it+1) != wallWaves.end(); ++it){
         if( it->equal(*(it+1)) ){
-            wallWaves.erase(it+1);
+            wallWaves.erase(it+1); // TODO: this is slow
         }
     }
 
-    for(int i=0; i< waves.size(); ++i){
-        if(i%2) { // erase 50% of waves
-            waves.erase(waves.begin() + i);
-        }
+    const size_t ws = waves.size();
+    for(int i=1; i < ws/2; i+=2){
+        waves[i] = waves[ws-i]; // mix new waves into the old waves
     }
+
+    waves.resize(ws/2); // erase 50% of waves
+
+//    int dt = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()-temp).count();
+//    std::cout << std::endl << "DT=" << dt << "ms, L=" << lives.size() << ",w=" << waves.size() << ",W="<< wallWaves.size() << "  ";
 }
 
 
@@ -48,6 +59,10 @@ void Game::event(SDL_Event& e){
             case SDLK_RIGHT:  a.action = ActionType::kickRight; break;
             case SDLK_UP:     a.action = ActionType::kickBoth;  break;
             case SDLK_DOWN:   lives.emplace_back(); return;
+            case SDLK_SPACE:
+                std::cout << std::dec << std::endl << "L=" << lives.size() << ",w=" << waves.size() << ",W="<< wallWaves.size() << "  ";
+                std::cout.flush(); 
+                return;
             default: return;
         }
         for(Life& life: lives){
@@ -58,7 +73,7 @@ void Game::event(SDL_Event& e){
 
 
 void Game::draw(SDL_Renderer* rend, int width, int height){
-    const int fps = 60;
+    const int fps = 30;
     const auto frameTime = std::chrono::milliseconds(1000/fps);
     static auto nextTime = std::chrono::high_resolution_clock::now();
     auto time = std::chrono::high_resolution_clock::now();
@@ -71,7 +86,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     } else {
         std::cout << '_';
         std::cout.flush();
-        cleanupWaves();
+        cleanupWaves(time);
     }
     nextTime += frameTime;
 
