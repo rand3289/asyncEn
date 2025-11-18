@@ -6,9 +6,21 @@
 #include "geometry.h"
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 #include <iostream> // for debugging
-#include <chrono>
 #include <thread> // sleep_for()
 #include <algorithm> // sort()
+
+#include <chrono>
+using namespace std::chrono;
+
+
+struct Timer {
+    std::chrono::high_resolution_clock::time_point t;
+public:
+    Timer(): t(high_resolution_clock::now()) {}
+    int time(){
+        return duration_cast<milliseconds>(high_resolution_clock::now()-t).count();
+    }
+};
 
 
 Game& Game::getInstance() {
@@ -22,14 +34,16 @@ void Game::addWave(const SDL_Color& color, const Point2D& p){
 }
 
 
+void Game::log() {
+    std::cout << std::dec << std::endl << "L=" << lives.size() << ",w=" << waves.size() << ",W="<< wallWaves.size() << "  ";
+}
+
+
 // reduce the number of waves in the system to level framerate
 void Game::cleanupWaves(std::chrono::high_resolution_clock::time_point& time){
-//    std::cout << std::dec << std::endl << "L=" << lives.size() << ",w=" << waves.size() << ",W="<< wallWaves.size() << "  ";
-//    auto temp = std::chrono::high_resolution_clock::now();
-
     // prevent cleanup two frames in a row
-//    static auto lastTime = std::chrono::high_resolution_clock::now();
-//    if(time-lastTime < std::chrono::milliseconds(128)){ return; }
+    // static auto lastTime = std::chrono::high_resolution_clock::now();
+    // if(time-lastTime < std::chrono::milliseconds(128)){ return; }
 
     std::sort(wallWaves.begin(), wallWaves.end()); // by type and location
 
@@ -41,13 +55,10 @@ void Game::cleanupWaves(std::chrono::high_resolution_clock::time_point& time){
 
     const size_t ws = waves.size();
     for(int i=1; i < ws/2; i+=2){
-        waves[i] = waves[ws-i]; // mix new waves into the old waves
+        waves[i] = waves[ws-i]; // mix new waves from the back into the old waves in front
     }
 
     waves.resize(ws/2); // erase 50% of waves
-
-//    int dt = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()-temp).count();
-//    std::cout << std::endl << "DT=" << dt << "ms, L=" << lives.size() << ",w=" << waves.size() << ",W="<< wallWaves.size() << "  ";
 }
 
 
@@ -81,8 +92,8 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     if(time < nextTime){ // this makes sure framerate (FPS) is steady
         std::this_thread::sleep_for(nextTime-time);
         int ms = std::chrono::duration_cast<std::chrono::milliseconds>(nextTime - time).count();
-        std::cout << std::hex << ms;
-        std::cout.flush();
+//        std::cout << std::hex << ms << ' ';
+//        std::cout.flush();
     } else {
         std::cout << '_';
         std::cout.flush();

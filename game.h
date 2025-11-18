@@ -9,6 +9,7 @@ class Game {
     std::vector<Wave> waves;
     std::vector<Life> lives;
     void cleanupWaves(std::chrono::high_resolution_clock::time_point& time);
+    void log();
 public:
     static Game& getInstance();
     void event(SDL_Event& e);

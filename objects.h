@@ -71,7 +71,7 @@ class Life {
     Point2D velocity; // TODO: this is currently unused
     double angle;
     LockFreeQueue<Action> actQ;  // brain runs on a different thread.  This could change to a network connection
-    LockFreeQueue<Event> eventQ; // TODO: implement sending events to the brain
+    LockFreeQueue<Event> eventQ;
 public:
     Circle circle; // TODO: make this private
 
@@ -91,6 +91,6 @@ public:
 
     double getAngle() const { return angle; }
     void action(const Action& a);  // agent wants to perform this action (eg: kick left, kick right)
-    // TODO: accept parameters instead of a a constructed event here:
+    // TODO: accept event parameters instead of a a constructed event here?
     void event(const Event& e);    // collision, wave, etc...
 };

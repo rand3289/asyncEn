@@ -51,7 +51,7 @@ bool WallWave::checkCollision(const Circle& circle) const {
 
 // this is the collision angle from the point of view of Life
 double WallWave::getCollisionAngle(double angle) const {
-    const double NIENTY = 90; // TODO: check if it is in RADIANS
+    const double NIENTY = 90;
     switch(type){
         case WallWaveType::horisontal_down:
             return NIENTY-angle;
@@ -107,10 +107,12 @@ void Life::draw(SDL_Renderer* rend) const {
 }
 
 void Life::event(const Event& e){
-    switch(e.event){
-        case EventType::collision: break;
-        case EventType::wave: break;
-    }
+    eventQ.enqueue(e);
+// TODO: this is for debugging purposes only till the agent is running
+// and able to take items off the queue
+// implement sending events to the brain
+    Event e2;
+    eventQ.dequeue(e2);
 }
 
 void Life::action(const Action& a){
