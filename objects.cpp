@@ -121,7 +121,7 @@ void Life::action(const Action& a){
 
 void Life::move(){
     static Game& game = Game::getInstance();
-    static const Point2D unitVector(5.0, 0);
+    static const Point2D unitVector(speed, 0);
     Action a;
     if( actQ.dequeue(a) ){
         switch(a.action){

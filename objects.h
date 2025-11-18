@@ -8,9 +8,9 @@
 enum WallWaveType{vertical_right, vertical_left, horisontal_up, horisontal_down};
 
 class WallWave {
-    const double waveSpeed = 1.0;
+    const double waveSpeed = 2.0;
     const double fadeSpeed = 2.0;
-    double r,g,b; // SDL_FColor color; // floating point r,g,b available since SDL 3.2.0.
+    double r,g,b; // SDL_FColor color floating point r,g,b available since SDL 3.2.0.
     double loc;
     WallWaveType type;
 public:
@@ -31,9 +31,9 @@ public:
 
 
 class Wave {
-    const double waveSpeed = 1.0;
+    const double waveSpeed = 2.0;
     const double fadeSpeed = 2.0;
-    double r,g,b; // SDL_FColor color; // floating point r,g,b available since SDL 3.2.0.
+    double r,g,b; // SDL_FColor color floating point r,g,b available since SDL 3.2.0.
 public:
     Circle circle; // TODO: make this private
 
@@ -66,8 +66,9 @@ struct Action {
 
 
 class Life {
+    const double speed = 1.0;
     double health;
-    SDL_Color color;
+    SDL_Color color; // TODO: convert to rgb??? Work on making Lives colorful
     Point2D velocity; // TODO: this is currently unused
     double angle;
     LockFreeQueue<Action> actQ;  // brain runs on a different thread.  This could change to a network connection
