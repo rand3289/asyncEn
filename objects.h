@@ -4,6 +4,8 @@
 #include <SDL2/SDL.h>
 #include <chrono>
 
+typedef std::chrono::high_resolution_clock::time_point Time;
+
 
 enum WallWaveType{vertical_right, vertical_left, horisontal_up, horisontal_down};
 
@@ -71,23 +73,25 @@ class Life {
     SDL_Color color; // TODO: convert to rgb??? Work on making Lives colorful
     Point2D velocity; // TODO: this is currently unused
     double angle;
+    Time lastWave;
     LockFreeQueue<Action> actQ;  // brain runs on a different thread.  This could change to a network connection
     LockFreeQueue<Event> eventQ;
 public:
     Circle circle; // TODO: make this private
 
     Life(): health(10.0), velocity(10,10), angle(10), circle(10,10,5) {
+        lastWave = std::chrono::high_resolution_clock::now();
         color.r = color.g = color.b = 255;
         color.a = SDL_ALPHA_OPAQUE;
         circle.center.x = rand()%700; // TODO: fix this
         circle.center.y = rand()%700;
     }
-    Life(const Life& other): health(other.health), color(other.color), circle(other.circle), velocity(other.velocity), angle(other.angle) {}
-    Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), velocity(std::move(other.velocity)), angle(other.angle) {}
+    Life(const Life& other): health(other.health), color(other.color), circle(other.circle), velocity(other.velocity), angle(other.angle) { lastWave = std::chrono::high_resolution_clock::now(); }
+    Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), velocity(std::move(other.velocity)), angle(other.angle) { lastWave = std::chrono::high_resolution_clock::now(); }
     Life& operator=(const Life& other);
 
     void draw(SDL_Renderer* rend) const; // draws on screen ONLY!
-    void move();                   // calculates things
+    void move(const Time& t);            // calculates things
     double getHealth() const { return health; }
 
     double getAngle() const { return angle; }

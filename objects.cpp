@@ -119,7 +119,7 @@ void Life::action(const Action& a){
     actQ.enqueue(a);
 }
 
-void Life::move(){
+void Life::move(const Time& t){
     static Game& game = Game::getInstance();
     static const Point2D unitVector(speed, 0);
     Action a;
@@ -132,7 +132,10 @@ void Life::move(){
         }
         // create a "unit vector", rotate it by angle, translate position using unit vector
         circle.center = circle.center.translate( unitVector.rotate(angle) );
-        game.addWave(color, circle.center); // every movement kicks up a wave
+        if( t - lastWave > std::chrono::milliseconds(500) ){
+            game.addWave(color, circle.center); // every movement kicks up a wave
+            lastWave = t;
+        }
     }
 }
 
@@ -143,6 +146,7 @@ Life& Life::operator=(const Life& other) {
         circle = other.circle;
         velocity = other.velocity;
         angle = other.angle;
+        lastWave = other.lastWave;
     }
     return *this;
 }

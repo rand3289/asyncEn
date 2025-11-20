@@ -169,7 +169,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
             continue;
         }
         lives[i].draw(rend);
-        lives[i].move();
+        lives[i].move(time);
     }
 
     // draw and move waves or delete them if health < 0
