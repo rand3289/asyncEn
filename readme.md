@@ -1,5 +1,5 @@
 # asyncEn
-asyncEn is a minimalistic event based simulation for testing AI algorithms.  
+asyncEn is a minimalistic event based environment for testing AI algorithms.  
 This is the simplest environment I could write.  Everything is a circle or a line (wall) to simplify collision detection.  
 Agents driving objects' behavior send momentary actions and receive events from the environment.  
 Actions are left/right/forward kicks to propell itself.  Events include collisions and wave interactions.  
