@@ -5,6 +5,9 @@ Agents driving objects' behavior send momentary actions and receive events from 
 Actions are left/right/forward kicks to propell itself.  Events include collisions and wave interactions.  
 Simulation takes place on the surface that generates waves during collisions and kicks. Waves dissipate as they propagate. This should allow agents to determine distances.  
 
+![asyncEn screenshot](screenshot.png)    
+Circular waves are generated when objects move.  Straight lines propagate out from walls when they get hit. In this case top wall got hit by two entities and straight lines are moving down.  They get fainter as they move.
+
 # Techical details
 Simulation is written in C++.  
 There are no library dependencies other than SDL2.  
