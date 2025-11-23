@@ -51,7 +51,7 @@ public:
 };
 
 
-enum EventType{collision, wave, death};
+enum EventType{ noop=0, collision, wave, death};
 
 struct Event {
     EventType event;

@@ -21,9 +21,9 @@ struct Point2D {
     // https://www.siggraph.org/education/materials/HyperGraph/modeling/mod_tran/3drota.htm
     Point2D rotate(double a) const { // rotate around z axis
         a /= RADIAN; // convert to radians
-        const double sa = sin(a);
-        const double ca = cos(a);
-        return Point2D( x*ca-y*sa, y*ca+x*sa );
+        const double sina = sin(a);
+        const double cosa = cos(a);
+        return Point2D( x*cosa - y*sina, y*cosa + x*sina );
     }
 
     double angle(const Point2D& rhs) const {
