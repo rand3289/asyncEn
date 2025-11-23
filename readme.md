@@ -12,7 +12,9 @@ Circular waves are generated when objects move.  Straight lines propagate out fr
 Simulation is written in C++.  
 There are no library dependencies other than SDL2.  
 Agents will run on their own threads.  
-I might implement stdio-style agents so that they can be stand alone executables.  Alternatively I might implement this environment to be a stdio-style stand alone executable.  This way it will take actions on stdin and output events on stdout.  The problem with this implementation is that IO has to be multiplexed on stdin/stdout among multiple agents.
+I might implement stdio-style agents so that they can be stand alone executables.
+
+Implementing this environment to be a stdio-style stand alone executable so that it takes actions on stdin and output events on stdout is problematic because IO would have to be multiplexed on stdin/stdout among multiple agents.
 
 # Notes
 * It seems ALL objects can calculate their own locations, velocity and acceleration till a collision occurs
