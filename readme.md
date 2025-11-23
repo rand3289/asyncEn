@@ -12,13 +12,9 @@ Circular waves are generated when objects move.  Straight lines propagate out fr
 Simulation is written in C++.  
 There are no library dependencies other than SDL2.  
 Agents will run on their own threads.  
-I might implement stdio-style agents so that they can be stand alone executables.
-
-Implementing this environment to be a stdio-style stand alone executable so that it takes actions on stdin and output events on stdout is problematic because IO would have to be multiplexed on stdin/stdout among multiple agents.
+I might implement loading stdio-style agents so that they can be stand alone executables.  
 
 # Notes
-* It seems ALL objects can calculate their own locations, velocity and acceleration till a collision occurs
-* When a collision occurs, location, velocity and acceleration have to be calculated for them because at least 2 objects were involved
-* Should in-game time be expressed in ticks or std::chrono::high_resolution_clock?  
-Hi-res clock can be used in the future to convey the time of the collision more precisely.
-With tick count asyncEn does not have to guess when to relay an action to an object in the environment.
+* It seems ALL objects can calculate their own locations, velocity and acceleration till a collision occurs.
+* When a collision occurs, location, velocity and acceleration have to be calculated for them because at least 2 objects were involved.
+* Should in-game time be expressed in ticks or std::chrono::high_resolution_clock?  Hi-res clock can be used in the future to convey the time of the collision more precisely.  With tick count asyncEn does not have to guess when to relay an action to an object in the environment.
