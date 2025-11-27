@@ -60,12 +60,12 @@ struct Circle {
     }
 
     void draw(SDL_Renderer* rend) const {
-        drawCircle(rend,center.x, center.y, radius);
+        drawCircle(rend, center.x, center.y, radius);
     }
 
-    // distance between CIRCUMFERENCES (not centers)
-    double distance(const Circle& rhs) const {
-        return center.distance(rhs.center) - (radius+rhs.radius);
+    // distance between CIRCUMFERENCES of two circles (not centers)
+    double distance(const Circle& b) const {
+        return center.distance(b.center) - (radius+b.radius);
     }
 
     bool checkCollision(const Circle& b) const {
@@ -78,11 +78,11 @@ struct Circle {
 
     // push two circles apart after a collision
     void pushApart(Circle& b) {
-        double angle = center.angle(b.center);
-        double delta = distance(b) / 1.99; // move each Circle just over half the distance away
-        Point2D moveBy = Point2D(abs(delta), 0).rotate(angle);
+        double angle = center.angle(b.center);  // angle between two circle centers
+        double delta = abs(distance(b) / 1.99); // move each Circle just over half the distance away
+        Point2D moveBy = Point2D(delta, 0).rotate(angle);
         center = center.translate(moveBy);
-        moveBy = moveBy.rotate(180);
+        moveBy = moveBy.rotate(180); // push the second circle the other way
         b.center = b.center.translate(moveBy);
     }
 };
