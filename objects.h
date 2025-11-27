@@ -81,13 +81,10 @@ public:
 
     Life(): health(10.0), velocity(10,10), angle(10), circle(10,10,5) {
         lastWave = std::chrono::high_resolution_clock::now();
-        color.r = rand()%2 ? 255: 0;
-        color.g = rand()%2 ? 255: 0;
-        color.b = rand()%2 ? 255: 0;
+        color.r = rand()%201 + 55;
+        color.g = rand()%201 + 55;
+        color.b = rand()%201 + 55;
         color.a = SDL_ALPHA_OPAQUE;
-        if( !(color.r | color.g | color.b) ){
-            color.r = color.g = color.b = 255;
-        }
         circle.center.x = rand()%700; // TODO: fix this
         circle.center.y = rand()%700;
     }
