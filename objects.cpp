@@ -1,5 +1,6 @@
 #include "objects.h"
 #include "game.h"   // Game::getInstance()
+#include <unistd.h> // read()
 #include <iostream> // for debugging
 
 
@@ -110,13 +111,16 @@ void Life::event(const Event& e){
     // TODO: write this event to inFd
 }
 
-void Life::action(const Action& a){}
+void Life::action(const Action& a){} // TODO: wire it to call move() ???
 
 void Life::move(const Time& t){
     static Game& game = Game::getInstance();
     static const Point2D unitVector(speed, 0);
-    Action a; // TODO: read action from outFd
-    if( a.action != ActionType::none ){
+
+    char buff[128];
+    if( read(outFd, buff, sizeof(buff)) > 0 ){
+        Action a; // TODO: this datastructure might not be needed
+        a.action = (ActionType) atoi(buff);
         switch(a.action){
             case ActionType::kickLeft:  angle-=10.0; break;
             case ActionType::kickRight: angle+=10.0; break;

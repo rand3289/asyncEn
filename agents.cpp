@@ -1,7 +1,14 @@
 #include "asyncen.h" // Args class
 #include <unistd.h>
+#include <fcntl.h>
+//#include <errno.h>
 #include <vector>
 #include <string>
+
+void setNonBlock(int fd) { // Set non-blocking mode
+    int flags = fcntl(fd, F_GETFL, 0);
+    fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+}
 
 
 void spawnAgents(std::vector<int>& inputFds, std::vector<int>& outputFds) {
@@ -17,6 +24,7 @@ void spawnAgents(std::vector<int>& inputFds, std::vector<int>& outputFds) {
         if (pid == 0) { // Child process
             dup2(inputFds[idx], STDIN_FILENO);
             dup2(outputFds[idx], STDOUT_FILENO);
+
             // execl() returns -1 when fails
             inputFds[idx] = outputFds[idx] = execl(argv[i].c_str(), argv[i].c_str(), nullptr);
             exit(1); // this runs only if execl() fails

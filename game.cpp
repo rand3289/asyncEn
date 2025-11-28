@@ -1,5 +1,6 @@
 // The game is played on the surface of a pond so everything that moves ripples
 #include "game.h"
+#include "agents.h"
 #include "geometry.h"
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 #include <iostream> // for debugging
@@ -19,8 +20,6 @@ public:
 };
 
 
-void spawnAgents(std::vector<int>& inputFds, std::vector<int>& outputFds); // in agents.cpp
-
 Game& Game::getInstance() {
     static Game* instance;
     if(!instance){
@@ -32,6 +31,8 @@ Game& Game::getInstance() {
 
         for(size_t i = 0; i < inFds.size(); ++i){
             if( inFds[i] >= 0 ){ // -1 if executable failed to start
+                setNonBlock(inFds[i]);
+                setNonBlock(outFds[i]);
                 instance->lives.emplace_back(inFds[i], outFds[i]);
             }
         }
