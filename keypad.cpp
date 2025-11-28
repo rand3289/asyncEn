@@ -1,3 +1,4 @@
+// A human controlled simulation of an agent operating within asynEn environment
 // g++ keypad.cpp -o keypad -lSDL2
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 #include <iostream>
@@ -31,7 +32,6 @@ int main(int argc, char* argv[]){
         while( SDL_PollEvent( &e ) ){
             if(e.type == SDL_QUIT){ run=false; }
             else if (e.type == SDL_KEYDOWN){
-//            else if(e.type == SDL_KEYUP ){
                 switch(e.key.keysym.sym){
                     case SDLK_ESCAPE: run=false;       break;
                     case SDLK_LEFT:  std::cout << '1'; break;

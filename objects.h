@@ -87,8 +87,8 @@ public:
         circle.center.x = rand()%700; // TODO: fix this
         circle.center.y = rand()%700;
     }
-    Life(const Life& other): health(other.health), color(other.color), circle(other.circle), velocity(other.velocity), angle(other.angle) { lastWave = std::chrono::high_resolution_clock::now(); }
-    Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), velocity(std::move(other.velocity)), angle(other.angle) { lastWave = std::chrono::high_resolution_clock::now(); }
+    Life(const Life& other): health(other.health), color(other.color), circle(other.circle), velocity(other.velocity), angle(other.angle), inFd(other.inFd), outFd(other.outFd) { lastWave = std::chrono::high_resolution_clock::now(); }
+    Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), velocity(std::move(other.velocity)), angle(other.angle), inFd(other.inFd), outFd(other.outFd) { lastWave = std::chrono::high_resolution_clock::now(); }
     Life& operator=(const Life& other);
 
     void draw(SDL_Renderer* rend) const; // draws on screen ONLY!

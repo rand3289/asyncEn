@@ -144,6 +144,8 @@ Life& Life::operator=(const Life& other) {
         velocity = other.velocity;
         angle = other.angle;
         lastWave = other.lastWave;
+        inFd = other.inFd;
+        outFd = other.outFd;
     }
     return *this;
 }
