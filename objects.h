@@ -74,12 +74,11 @@ class Life {
     Point2D velocity; // TODO: this is currently unused
     double angle;
     Time lastWave;
-    LockFreeQueue<Action> actQ;  // brain runs on a different thread.  This could change to a network connection
-    LockFreeQueue<Event> eventQ;
+    int inFd, outFd;
 public:
     Circle circle; // TODO: make this private
 
-    Life(): health(10.0), velocity(10,10), angle(10), circle(10,10,5) {
+    Life(int inputFd, int outputFd): health(10.0), velocity(10,10), angle(10), circle(10,10,5), inFd(inputFd), outFd(outputFd) {
         lastWave = std::chrono::high_resolution_clock::now();
         color.r = rand()%201 + 55;
         color.g = rand()%201 + 55;

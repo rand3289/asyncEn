@@ -1,7 +1,4 @@
-// game of life played on the surface of a pond
-// everything that moves ripples
-// entities look like tubers in a lazy river
-
+// The game is played on the surface of a pond so everything that moves ripples
 #include "game.h"
 #include "geometry.h"
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
@@ -11,8 +8,6 @@
 
 #include <chrono>
 using namespace std::chrono;
-
-void spawnAgents(std::vector<int>& inputFds, std::vector<int>& outputFds); // in agents.cpp
 
 struct Timer {
     std::chrono::high_resolution_clock::time_point t;
@@ -24,11 +19,22 @@ public:
 };
 
 
+void spawnAgents(std::vector<int>& inputFds, std::vector<int>& outputFds); // in agents.cpp
+
 Game& Game::getInstance() {
     static Game* instance;
     if(!instance){
         instance = new Game();
-        spawnAgents(instance->inFds, instance->outFds);
+
+        std::vector<int> inFds;  // file descriptors
+        std::vector<int> outFds; // file descriptors
+        spawnAgents(inFds, outFds);
+
+        for(size_t i = 0; i < inFds.size(); ++i){
+            if( inFds[i] >= 0 ){ // -1 if executable failed to start
+                instance->lives.emplace_back(inFds[i], outFds[i]);
+            }
+        }
     }
     return *instance;
 }
@@ -74,7 +80,7 @@ void Game::event(SDL_Event& e){
             case SDLK_LEFT:   a.action = ActionType::kickLeft;  break;
             case SDLK_RIGHT:  a.action = ActionType::kickRight; break;
             case SDLK_UP:     a.action = ActionType::kickBoth;  break;
-            case SDLK_DOWN:   lives.emplace_back(); return;
+//            case SDLK_DOWN:   lives.emplace_back(); return;
             case SDLK_SPACE:
                 std::cout << std::dec << std::endl << "L=" << lives.size() << ",w=" << waves.size() << ",W="<< wallWaves.size() << "  ";
                 std::cout.flush(); 

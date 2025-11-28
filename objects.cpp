@@ -107,23 +107,16 @@ void Life::draw(SDL_Renderer* rend) const {
 }
 
 void Life::event(const Event& e){
-    eventQ.enqueue(e);
-// TODO: this is for debugging purposes only till the agent is running
-// and able to take items off the queue
-// implement sending events to the brain
-    Event e2;
-    eventQ.dequeue(e2);
+    // TODO: write this event to inFd
 }
 
-void Life::action(const Action& a){
-    actQ.enqueue(a);
-}
+void Life::action(const Action& a){}
 
 void Life::move(const Time& t){
     static Game& game = Game::getInstance();
     static const Point2D unitVector(speed, 0);
-    Action a;
-    if( actQ.dequeue(a) ){
+    Action a; // TODO: read action from outFd
+    if( a.action != ActionType::none ){
         switch(a.action){
             case ActionType::kickLeft:  angle-=10.0; break;
             case ActionType::kickRight: angle+=10.0; break;

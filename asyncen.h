@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 
-class Args {
+class Args { // access argc and argv anywhere
     static std::vector<std::string> args;
 public:
 
