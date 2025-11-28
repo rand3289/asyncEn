@@ -10,6 +10,7 @@
 #include <chrono>
 using namespace std::chrono;
 
+/*
 struct Timer {
     std::chrono::high_resolution_clock::time_point t;
 public:
@@ -18,7 +19,7 @@ public:
         return duration_cast<milliseconds>(high_resolution_clock::now() - t).count();
     }
 };
-
+*/
 
 Game& Game::getInstance() {
     static Game* instance;
@@ -42,9 +43,9 @@ void Game::addWave(const SDL_Color& color, const Point2D& p){
 }
 
 
-void Game::log() {
-    std::cout << std::dec << std::endl << "L=" << lives.size() << ",w=" << waves.size() << ",W="<< wallWaves.size() << "  ";
-}
+//void Game::log() {
+//    std::cout << std::dec << std::endl << "L=" << lives.size() << ",w=" << waves.size() << ",W="<< wallWaves.size() << "  ";
+//}
 
 
 // reduce the number of waves in the system to level framerate
@@ -65,8 +66,10 @@ void Game::cleanupWaves(std::chrono::high_resolution_clock::time_point& time){
     for(int i=1; i < ws/2; i+=2){
         waves[i] = waves[ws-i]; // mix new waves from the back into the old waves in front
     }
-
     waves.resize(ws/2); // erase 50% of waves
+
+    std::cout << '.';
+    std::cout.flush();
 }
 
 
@@ -74,19 +77,19 @@ void Game::event(SDL_Event& e){
     if(e.type == SDL_KEYDOWN){
         Action a = {.action = ActionType::none };
         switch(e.key.keysym.sym){
-            case SDLK_LEFT:   a.action = ActionType::kickLeft;  break;
-            case SDLK_RIGHT:  a.action = ActionType::kickRight; break;
-            case SDLK_UP:     a.action = ActionType::kickBoth;  break;
+//            case SDLK_LEFT:   a.action = ActionType::kickLeft;  break;
+//            case SDLK_RIGHT:  a.action = ActionType::kickRight; break;
+//            case SDLK_UP:     a.action = ActionType::kickBoth;  break;
 //            case SDLK_DOWN:   lives.emplace_back(); return;
             case SDLK_SPACE:
-                std::cout << std::dec << std::endl << "L=" << lives.size() << ",w=" << waves.size() << ",W="<< wallWaves.size() << "  ";
-                std::cout.flush(); 
+                std::cout << std::endl << "L=" << lives.size() << ", W=" << waves.size() << ", WW="<< wallWaves.size() << std::endl;
+                std::cout.flush();
                 return;
             default: return;
         }
-        for(Life& life: lives){
-            life.action(a);
-        }
+//        for(Life& life: lives){
+//            life.action(a);
+//        }
     }
 }
 
@@ -97,14 +100,12 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     static auto nextTime = std::chrono::high_resolution_clock::now();
     auto time = std::chrono::high_resolution_clock::now();
 
-    if(time < nextTime){ // this makes sure framerate (FPS) is steady
+    if(time < nextTime){ // make sure framerate (FPS) is steady
         std::this_thread::sleep_for(nextTime-time);
-        int ms = std::chrono::duration_cast<std::chrono::milliseconds>(nextTime - time).count();
+//        int ms = std::chrono::duration_cast<std::chrono::milliseconds>(nextTime - time).count();
 //        std::cout << std::hex << ms << ' ';
 //        std::cout.flush();
     } else {
-        std::cout << '_';
-        std::cout.flush();
         cleanupWaves(time);
     }
     nextTime += frameTime;
