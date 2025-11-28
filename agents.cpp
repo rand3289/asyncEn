@@ -24,17 +24,21 @@ void spawnAgents(const std::vector<std::string>& argv, std::vector<int>& inputFd
 
         pid_t pid = fork();
         if (pid == 0) { // Child process
-            dup2(readPipe[0], STDIN_FILENO);
+            dup2( readPipe[0], STDIN_FILENO);
             dup2(writePipe[1], STDOUT_FILENO);
             close( readPipe[1]);
             close(writePipe[0]);
 
             // execl() returns -1 when fails
-            inputFds[i] = outputFds[i] = execl(argv[i].c_str(), argv[i].c_str(), nullptr);
+            // TODO: how do you signal failure here?  Another output array?
+            execl(argv[i].c_str(), argv[i].c_str(), nullptr);
+            perror("execl");
             exit(1); // exit that process if execl() fails
         } else {
-            inputFds[i]  = readPipe[1];
+            inputFds[i]  =  readPipe[1];
             outputFds[i] = writePipe[0];
+            setNonBlock( inputFds[i]); // do not wait on slow agents
+            setNonBlock(outputFds[i]);
             close( readPipe[0]);
             close(writePipe[1]);
         }

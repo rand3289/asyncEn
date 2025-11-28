@@ -30,11 +30,7 @@ Game& Game::getInstance() {
         spawnAgents(inFds, outFds);
 
         for(size_t i = 0; i < inFds.size(); ++i){
-            if( inFds[i] >= 0 ){ // -1 if executable failed to start
-                setNonBlock(inFds[i]);
-                setNonBlock(outFds[i]);
-                instance->lives.emplace_back(inFds[i], outFds[i]);
-            }
+            instance->lives.emplace_back(inFds[i], outFds[i]);
         }
     }
     return *instance;
