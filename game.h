@@ -8,6 +8,8 @@ class Game {
     std::vector<WallWave> wallWaves;
     std::vector<Wave> waves;
     std::vector<Life> lives;
+    std::vector<int> inFds;  // file descriptors
+    std::vector<int> outFds; // file descriptors
     void cleanupWaves(std::chrono::high_resolution_clock::time_point& time);
     void log();
 public:

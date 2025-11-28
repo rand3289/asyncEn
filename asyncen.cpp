@@ -1,8 +1,12 @@
 // asyncEn is an asynchronous environment based on SDL
+#include "asyncen.h" // class Args
 #include "game.h"
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 #include <iostream>
 #include <string>
+
+std::vector<std::string> Args::args; // static
+
 
 void toggleFS(SDL_Window* win, int* width, int* height){
     bool fs = SDL_GetWindowFlags(win) & SDL_WINDOW_FULLSCREEN;
@@ -17,6 +21,7 @@ void exitSDLerr(){
 }
 
 int main(int argc, char* argv[]){
+    Args::init(argc, argv); // makes them available everywhere
     const int WIDTH = 1024;
     const int HEIGHT = 768;
     const int WINPOS = SDL_WINDOWPOS_CENTERED;

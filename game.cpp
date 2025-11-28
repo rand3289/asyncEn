@@ -12,6 +12,7 @@
 #include <chrono>
 using namespace std::chrono;
 
+void spawnAgents(std::vector<int>& inputFds, std::vector<int>& outputFds); // in agents.cpp
 
 struct Timer {
     std::chrono::high_resolution_clock::time_point t;
@@ -24,8 +25,12 @@ public:
 
 
 Game& Game::getInstance() {
-    static Game instance;
-    return instance;
+    static Game* instance;
+    if(!instance){
+        instance = new Game();
+        spawnAgents(instance->inFds, instance->outFds);
+    }
+    return *instance;
 }
 
 
