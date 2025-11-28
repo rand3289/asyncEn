@@ -15,7 +15,7 @@ struct Timer {
 public:
     Timer(): t(high_resolution_clock::now()) {}
     int time(){
-        return duration_cast<milliseconds>(high_resolution_clock::now()-t).count();
+        return duration_cast<milliseconds>(high_resolution_clock::now() - t).count();
     }
 };
 

@@ -70,11 +70,11 @@ struct Action {
 class Life {
     const double speed = 1.0;
     double health;
-    SDL_Color color; // TODO: convert to rgb??? Work on making Lives colorful
+    SDL_Color color;  // TODO: convert to rgb???
     Point2D velocity; // TODO: this is currently unused
     double angle;
     Time lastWave;
-    int inFd, outFd;
+    int inFd, outFd;  // IO file descriptors
 public:
     Circle circle; // TODO: make this private
 
@@ -97,6 +97,6 @@ public:
 
     double getAngle() const { return angle; }
     void action(const Action& a);  // agent wants to perform this action (eg: kick left, kick right)
-    // TODO: accept event parameters instead of a a constructed event here?
+    // TODO: accept event parameters instead of a constructed event here?
     void event(const Event& e);    // collision, wave, etc...
 };
