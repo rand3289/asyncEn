@@ -1,4 +1,6 @@
-// A human controlled simulation of an agent operating within asynEn environment
+// A human controlled agent for asynEn environment
+// It creates a blank window, captures LEFT/UP/RIGHT keys and prints corresponding 1/2/3 to stdout
+// Agents implemented as a console applications do not show a window
 // g++ keypad.cpp -o keypad -lSDL2
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 #include <iostream>
@@ -25,6 +27,7 @@ int main(int argc, char* argv[]){
     if(0==window){ exitSDLerr(); }
     SDL_Renderer * renderer = SDL_CreateRenderer(window, -1, 0);
     if(0==renderer){ exitSDLerr(); }
+//        SDL_SetRenderDrawBlendMode(renderer,SDL_BLENDMODE_NONE);
 
     SDL_Event e;
     bool run = true;
@@ -43,10 +46,8 @@ int main(int argc, char* argv[]){
             }
         }
 
-        SDL_SetRenderDrawBlendMode(renderer,SDL_BLENDMODE_NONE);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(renderer);
-        SDL_SetRenderDrawBlendMode(renderer,SDL_BLENDMODE_ADD);
         SDL_RenderPresent(renderer);
         std::this_thread::sleep_for(milliseconds(10));
     }
