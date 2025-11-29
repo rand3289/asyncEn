@@ -1,6 +1,5 @@
 #pragma once
 #include "geometry.h"
-#include "queue.h"
 #include <SDL2/SDL.h>
 #include <chrono>
 
