@@ -107,11 +107,24 @@ void Life::draw(SDL_Renderer* rend) const {
     circle.draw(rend);
 }
 
+// writes Event into inFd
 void Life::event(const Event& e){
-    // TODO: write this event to inFd
+    int size;
+    char buff[32];
+    switch(e.event){
+        case EventType::wave:
+            size = sprintf(buff, "1,%d ", e.srcAngle);
+            break;
+        case EventType::collision:
+            size = sprintf(buff, "2,%d ", e.srcAngle);
+            break;
+        case EventType::death:
+            size = sprintf(buff, "3 ");
+            break;
+        default: return;
+    }
+    write(inFd,buff,size);
 }
-
-void Life::action(const Action& a){} // TODO: wire it to call move() ???
 
 void Life::move(const Time& t){
     static Game& game = Game::getInstance();

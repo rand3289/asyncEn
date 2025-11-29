@@ -5,13 +5,13 @@
 #include <string>
 
 
-void setNonBlock(int fd) { // Set non-blocking mode
+static void setNonBlock(int fd) { // Set non-blocking mode
     int flags = fcntl(fd, F_GETFL, 0);
     fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
 
 
-void spawnAgents(const std::vector<std::string>& argv, std::vector<int>& inputFds, std::vector<int>& outputFds) {
+static void spawnAgents(const std::vector<std::string>& argv, std::vector<int>& inputFds, std::vector<int>& outputFds) {
     inputFds.resize(argv.size());
     outputFds.resize(argv.size());
 

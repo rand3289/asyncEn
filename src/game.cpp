@@ -1,25 +1,14 @@
 // The game is played on the surface of a pond so everything that moves ripples
 #include "game.h"
-#include "agents.h"
+#include "agents.h"   // spawnAgents()
 #include "geometry.h"
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
-#include <iostream> // for debugging
-#include <thread> // sleep_for()
-#include <algorithm> // sort()
-
+#include <iostream>   // for debugging
+#include <thread>     // sleep_for()
+#include <algorithm>  // sort()
 #include <chrono>
 using namespace std::chrono;
 
-/*
-struct Timer {
-    std::chrono::high_resolution_clock::time_point t;
-public:
-    Timer(): t(high_resolution_clock::now()) {}
-    int time(){
-        return duration_cast<milliseconds>(high_resolution_clock::now() - t).count();
-    }
-};
-*/
 
 Game& Game::getInstance() {
     static Game* instance;
@@ -41,11 +30,6 @@ Game& Game::getInstance() {
 void Game::addWave(const SDL_Color& color, const Point2D& p){
     waves.emplace_back(color, p.x, p.y, 1); 
 }
-
-
-//void Game::log() {
-//    std::cout << std::dec << std::endl << "L=" << lives.size() << ",w=" << waves.size() << ",W="<< wallWaves.size() << "  ";
-//}
 
 
 // reduce the number of waves in the system to level framerate
@@ -75,21 +59,10 @@ void Game::cleanupWaves(std::chrono::high_resolution_clock::time_point& time){
 
 void Game::event(SDL_Event& e){
     if(e.type == SDL_KEYDOWN){
-        Action a = {.action = ActionType::none };
-        switch(e.key.keysym.sym){
-//            case SDLK_LEFT:   a.action = ActionType::kickLeft;  break;
-//            case SDLK_RIGHT:  a.action = ActionType::kickRight; break;
-//            case SDLK_UP:     a.action = ActionType::kickBoth;  break;
-//            case SDLK_DOWN:   lives.emplace_back(); return;
-            case SDLK_SPACE:
-                std::cout << std::endl << "L=" << lives.size() << ", W=" << waves.size() << ", WW="<< wallWaves.size() << std::endl;
-                std::cout.flush();
-                return;
-            default: return;
+        if(e.key.keysym.sym == SDLK_SPACE){
+            std::cout << std::endl << "L=" << lives.size() << ", W=" << waves.size() << ", WW="<< wallWaves.size() << std::endl;
+            std::cout.flush();
         }
-//        for(Life& life: lives){
-//            life.action(a);
-//        }
     }
 }
 
@@ -104,9 +77,6 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
 
     if(time < nextTime){ // make sure framerate (FPS) is steady
         std::this_thread::sleep_for(nextTime-time);
-//        int ms = std::chrono::duration_cast<std::chrono::milliseconds>(nextTime - time).count();
-//        std::cout << std::hex << ms << ' ';
-//        std::cout.flush();
     } else {
         cleanupWaves(time);
     }

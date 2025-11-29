@@ -95,7 +95,6 @@ public:
     double getHealth() const { return health; }
 
     double getAngle() const { return angle; }
-    void action(const Action& a);  // agent wants to perform this action (eg: kick left, kick right)
     // TODO: accept event parameters instead of a constructed event here?
     void event(const Event& e);    // collision, wave, etc...
 };
