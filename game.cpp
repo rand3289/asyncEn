@@ -95,6 +95,8 @@ void Game::event(SDL_Event& e){
 
 
 void Game::draw(SDL_Renderer* rend, int width, int height){
+//    static int tick = 0;
+//    ++tick;
     const int fps = 30;
     const auto frameTime = std::chrono::milliseconds(1000/fps);
     static auto nextTime = std::chrono::high_resolution_clock::now();

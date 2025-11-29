@@ -24,7 +24,7 @@ void spawnAgents(const std::vector<std::string>& argv, std::vector<int>& inputFd
 
         pid_t pid = fork();
         if (pid == 0) { // Child process
-            dup2( readPipe[0], STDIN_FILENO);
+            dup2( readPipe[0],  STDIN_FILENO);
             dup2(writePipe[1], STDOUT_FILENO);
             close( readPipe[1]);
             close(writePipe[0]);

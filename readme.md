@@ -11,8 +11,8 @@ Circular waves are generated when objects move.  Straight lines propagate out fr
 # Techical details
 Simulation is written in C++.  
 There are no library dependencies other than SDL2.  
-Agents will run on their own threads.  
-I might implement loading stdio-style agents so that they can be stand alone executables.  
+Agents are stand alone stdio-style executables.  See [easya.cpp](easya.cpp) for a complete random agent implementation.  
+Run ```make; asyncen easya keypad``` to see how things run.  You can click on keypad window and use UP/LEFT/RIGHT to move one agent around.  
 
 # Notes
 * It seems ALL objects can calculate their own locations, velocity and acceleration till a collision occurs.
