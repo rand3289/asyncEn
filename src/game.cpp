@@ -68,8 +68,6 @@ void Game::event(SDL_Event& e){
 
 
 void Game::draw(SDL_Renderer* rend, int width, int height){
-//    static int tick = 0;
-//    ++tick;
     const int fps = 30;
     const auto frameTime = std::chrono::milliseconds(1000/fps);
     static auto nextTime = std::chrono::high_resolution_clock::now();
@@ -114,6 +112,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
                 e.srcAngle += 180;
                 lives[j].event(e);
                 lives[i].circle.pushApart(lives[j].circle); // push collided lives apart
+                // TODO: shouldn't collisions cause waves ???
             }
         }
     }
@@ -125,6 +124,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
             if( life.circle.checkCollision(wave.circle) && !wave.circle.inside(life.circle) ){ // once wave passes Life, stop sending events
                 e.srcAngle = life.circle.center.angle(wave.circle.center);
                 life.event(e); // waves don't get events
+// TODO: extrapolate a wave movement through a Life (send multiple events)
             }
         }
     }
@@ -135,6 +135,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
             if(wave.checkCollision(life.circle)){
                 e.srcAngle = wave.getCollisionAngle(life.getAngle());
                 life.event(e);
+// TODO: extrapolate a wave movement through a Life (send multiple events)
             }
         }
     }
