@@ -10,6 +10,32 @@
 using namespace std::chrono;
 
 
+// extrapolate how a straight wave (line) travels through a circle of radius 'radius'
+// from left to right on the interval of time from (time - frameTime) till time 'time'
+//
+// 'radius' is the circle radius through which the wave travels
+// 'angle' is the angle at which the wave enters the circle
+// 'distance' is the distance from the center of the circle to the line of the wave
+void extrapolateWaveTravel(Life& life, double angle, double distance, const Time& time, const milliseconds& frameTime){
+//    life.circle.radius;
+    static Event evt = { .event = EventType::wave, .srcAngle = angle };
+
+    life.event(evt);
+}
+
+void extrapolateWaveTravel(Life& life, const Wave& wave, const Time& time, const milliseconds& frameTime){
+    double angle = life.circle.center.angle(wave.circle.center) + life.getAngle();
+    double distance = life.circle.center.distance(wave.circle.center) - wave.circle.radius;
+    extrapolateWaveTravel(life, angle, distance, time, frameTime);
+}
+
+void extrapolateWaveTravel(Life& life, const WallWave& wave, const Time& time, const milliseconds& frameTime){
+    double angle = wave.getCollisionAngle(life.getAngle());
+    double distance = wave.getDistance(life.circle.center);
+    extrapolateWaveTravel(life, angle, distance, time, frameTime);
+}
+
+
 Game& Game::getInstance() {
     static Game* instance;
     if(!instance){
@@ -81,7 +107,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     nextTime += frameTime;
 
     // check collisions with walls and push circles away from the walls
-    Event e = {EventType::collision, time, 0.0};
+    Event e = {time, EventType::collision, 0.0};
     for(Life& life: lives){
         if(life.circle.center.x <= 0){
             life.circle.center.x = life.circle.radius;
@@ -124,7 +150,9 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
             if( life.circle.checkCollision(wave.circle) && !wave.circle.inside(life.circle) ){ // once wave passes Life, stop sending events
                 e.srcAngle = life.circle.center.angle(wave.circle.center);
                 life.event(e); // waves don't get events
-// TODO: extrapolate a wave movement through a Life (send multiple events)
+//                extrapolateWaveTravel(life, wave, time);
+//extrapolateWaveTravel(life.circle.center.x, life.circle.center.y, life.getAngle(), life.circle.radius, time, frameTime, wave.circle.center.x, wave.circle.center.y, wave.circle.radius);
+// TODO: extrapolate a wave movement through a Life (send multiple events) see wave.html for more info
             }
         }
     }
@@ -135,7 +163,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
             if(wave.checkCollision(life.circle)){
                 e.srcAngle = wave.getCollisionAngle(life.getAngle());
                 life.event(e);
-// TODO: extrapolate a wave movement through a Life (send multiple events)
+// TODO: extrapolate a wave movement through a Life (send multiple events) see wave.html for more info
             }
         }
     }

@@ -25,6 +25,8 @@ public:
     double getHealth() const { return r+g+b; }
     bool checkCollision(const Circle& circle) const;
     double getCollisionAngle(double angle) const;
+    double getDistance(const Point2D& p) const;
+
     bool less(const WallWave& b) const { return type==b.type ? loc < b.loc : type < b.type; }
     bool operator<(const WallWave& b) const { return less(b); }
     bool equal(const WallWave& b) const { return type==b.type && loc == b.loc; }
@@ -53,16 +55,22 @@ public:
 enum EventType{ noop=0, collision, wave, death};
 
 struct Event {
+    Time time;
     EventType event;
-    std::chrono::high_resolution_clock::time_point time;
-    double srcAngle;
+    union {
+        double srcAngle;
+        struct {
+            int triggeredSensorNumber;
+            int rgb;
+        };
+    };
 };
 
 enum ActionType{ none=0, kickLeft, kickRight, kickBoth };
 
 struct Action {
+    Time time;
     ActionType action;
-    std::chrono::high_resolution_clock::time_point time;
 };
 
 
@@ -71,9 +79,9 @@ class Life {
     double health;
     SDL_Color color;  // TODO: convert to rgb???
     Point2D velocity; // TODO: this is currently unused
-    double angle;
-    Time lastWave;
-    int inFd, outFd;  // IO file descriptors
+    double angle;     // direction of movement
+    Time lastWave;    // last time this instance of Life generating a wave
+    int inFd, outFd;  // agent IO file descriptors for receiving events and sending actions
 public:
     Circle circle; // TODO: make this private
 

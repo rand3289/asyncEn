@@ -67,6 +67,15 @@ double WallWave::getCollisionAngle(double angle) const {
 }
 
 
+double WallWave::getDistance(const Point2D& p) const {
+    if(type==horisontal_down || type == horisontal_up){
+        return abs(loc - p.y);
+    } else {
+        return abs(loc - p.x);
+    }
+}
+
+
 WallWave& WallWave::operator=(const WallWave& other) {
     if (this != &other) {
         r = other.r;
