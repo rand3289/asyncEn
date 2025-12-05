@@ -55,7 +55,7 @@ Game& Game::getInstance() {
 }
 
 
-void Game::addWave(const SDL_Color& color, const Point2D& p){
+void Game::addWave(const RGB& color, const Point2D& p){
     waves.emplace_back(color, p.x, p.y, 1); 
 }
 

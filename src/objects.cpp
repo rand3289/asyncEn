@@ -18,7 +18,7 @@ void WallWave::draw(SDL_Renderer* rend, int width, int height) const {
             p2.y = height;
             break;
     }
-    SDL_SetRenderDrawColor(rend, r, g, b, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(rend, rgb.r, rgb.g, rgb.b, SDL_ALPHA_OPAQUE);
     line(rend, p1, p2);
 }
 
@@ -30,9 +30,9 @@ void WallWave::move(){
         case WallWaveType::vertical_left:   loc-=waveSpeed; break;
         case WallWaveType::vertical_right:  loc+=waveSpeed; break;
     }
-    r = r>fadeSpeed ? r-fadeSpeed : 0.0;
-    g = g>fadeSpeed ? g-fadeSpeed : 0.0;
-    b = b>fadeSpeed ? b-fadeSpeed : 0.0;
+    rgb.r = rgb.r>fadeSpeed ? rgb.r-fadeSpeed : 0.0;
+    rgb.g = rgb.g>fadeSpeed ? rgb.g-fadeSpeed : 0.0;
+    rgb.b = rgb.b>fadeSpeed ? rgb.b-fadeSpeed : 0.0;
 }
 
 
@@ -78,9 +78,7 @@ double WallWave::getDistance(const Point2D& p) const {
 
 WallWave& WallWave::operator=(const WallWave& other) {
     if (this != &other) {
-        r = other.r;
-        g = other.g;
-        b = other.b;
+        rgb = other.rgb;
         loc = other.loc;
         type = other.type;
     }
@@ -90,24 +88,22 @@ WallWave& WallWave::operator=(const WallWave& other) {
 
 Wave& Wave::operator=(const Wave& other) {
     if (this != &other) {
-        r = other.r;
-        g = other.g;
-        b = other.b;
+        rgb = other.rgb;
         circle = other.circle;
     }
     return *this;
 }
 
 void Wave::draw(SDL_Renderer* rend) const {
-    SDL_SetRenderDrawColor(rend, r, g, b, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(rend, rgb.r, rgb.g, rgb.b, SDL_ALPHA_OPAQUE);
     circle.draw(rend);
 }
 
 void Wave::move() {
     circle.radius += waveSpeed;
-    r = r>fadeSpeed ? r-fadeSpeed : 0.0;
-    g = g>fadeSpeed ? g-fadeSpeed : 0.0;
-    b = b>fadeSpeed ? b-fadeSpeed : 0.0;
+    rgb.r = rgb.r>fadeSpeed ? rgb.r-fadeSpeed : 0.0;
+    rgb.g = rgb.g>fadeSpeed ? rgb.g-fadeSpeed : 0.0;
+    rgb.b = rgb.b>fadeSpeed ? rgb.b-fadeSpeed : 0.0;
 }
 
 

@@ -11,18 +11,18 @@ enum WallWaveType{vertical_right, vertical_left, horisontal_up, horisontal_down}
 class WallWave {
     const double waveSpeed = 2.0;
     const double fadeSpeed = 2.0;
-    double r,g,b; // SDL_FColor color floating point r,g,b available since SDL 3.2.0.
+    RGB rgb;
     double loc;
     WallWaveType type;
 public:
-    WallWave(double location, WallWaveType typE): r(255), g(255), b(255), loc(location), type(typE) {}
-    WallWave(const WallWave& other): r(other.r), g(other.g), b(other.b), loc(other.loc), type(other.type) {}
-    WallWave(WallWave&& other) noexcept: r(other.r), g(other.g), b(other.b), loc(other.loc), type(other.type) {}
+    WallWave(double location, WallWaveType typE): rgb(255,255,255), loc(location), type(typE) {}
+    WallWave(const WallWave& other): rgb(other.rgb), loc(other.loc), type(other.type) {}
+    WallWave(WallWave&& other) noexcept: rgb(other.rgb), loc(other.loc), type(other.type) {}
     WallWave& operator=(const WallWave& other);
 
     void draw(SDL_Renderer* rend, int width, int height) const;
     void move();
-    double getHealth() const { return r+g+b; }
+    double getHealth() const { return rgb.r + rgb.g + rgb.b; }
     bool checkCollision(const Circle& circle) const;
     double getCollisionAngle(double angle) const;
     double getDistance(const Point2D& p) const;
@@ -36,19 +36,19 @@ public:
 class Wave {
     const double waveSpeed = 2.0;
     const double fadeSpeed = 2.0;
-    double r,g,b; // SDL_FColor color floating point r,g,b available since SDL 3.2.0.
+    RGB rgb; // SDL_FColor color floating point r,g,b available since SDL 3.2.0.
 public:
     Circle circle; // TODO: make this private
 
-    Wave(): r(0), g(0), b(0), circle(0,0,0) { };
-    Wave(SDL_Color rgb, double x, double y, double radius): r(rgb.r), g(rgb.g), b(rgb.b), circle(x,y,radius) {}
-    Wave(const Wave& other): r(other.r), g(other.g), b(other.b), circle(other.circle) {}
-    Wave(Wave&& other) noexcept: r(other.r), g(other.g), b(other.b), circle(std::move(other.circle)) {}
+    Wave(): rgb(0,0,0), circle(0,0,0) { };
+    Wave(const RGB& rgbp, double x, double y, double radius): rgb(rgbp), circle(x,y,radius) {}
+    Wave(const Wave& other): rgb(other.rgb), circle(other.circle) {}
+    Wave(Wave&& other) noexcept: rgb(std::move(other.rgb)), circle(std::move(other.circle)) {}
     Wave& operator=(const Wave& other);
 
     void draw(SDL_Renderer* rend) const;
     void move();
-    double getHealth() const { return r+g+b; }
+    double getHealth() const { return rgb.r + rgb.g + rgb.b; }
 };
 
 
@@ -77,7 +77,7 @@ struct Action {
 class Life {
     const double speed = 1.0;
     double health;
-    SDL_Color color;  // TODO: convert to rgb???
+    RGB color;
     Point2D velocity; // TODO: this is currently unused
     double angle;     // direction of movement
     Time lastWave;    // last time this instance of Life generating a wave
@@ -90,7 +90,6 @@ public:
         color.r = rand()%201 + 55;
         color.g = rand()%201 + 55;
         color.b = rand()%201 + 55;
-        color.a = SDL_ALPHA_OPAQUE;
         circle.center.x = rand()%700; // TODO: fix this
         circle.center.y = rand()%700;
     }

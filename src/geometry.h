@@ -3,6 +3,17 @@
 
 #define RADIAN (180.0/M_PI) // degrees in one radian
 
+
+struct RGB{
+    double r,g,b;
+    RGB(): r(0.0),g(0.0),b(0.0) {}
+    RGB(double R, double G, double B): r(R), g(G), b(B) {}
+    RGB(const RGB& rgb): r(rgb.r), g(rgb.g), b(rgb.b) {}
+    RGB(RGB&& rgb) noexcept: r(rgb.r), g(rgb.g), b(rgb.b) {}
+    RGB& operator=(const RGB& rgb){ r=rgb.r; g=rgb.g; b=rgb.b; return *this; }
+};
+
+
 struct Point2D {
     double x,y;
     Point2D(): x(0.0), y(0.0) {}

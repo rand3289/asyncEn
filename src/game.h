@@ -13,5 +13,5 @@ public:
     static Game& getInstance();
     void event(SDL_Event& e);
     void draw(SDL_Renderer* rend, int width, int height);
-    void addWave(const SDL_Color& color, const Point2D& p);
+    void addWave(const RGB& color, const Point2D& p);
 };
