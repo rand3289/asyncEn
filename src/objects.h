@@ -23,6 +23,8 @@ public:
     void draw(SDL_Renderer* rend, int width, int height) const;
     void move();
     double getHealth() const { return rgb.r + rgb.g + rgb.b; }
+    const RGB& getRGB() const { return rgb; }
+
     bool checkCollision(const Circle& circle) const;
     double getCollisionAngle(double angle) const;
     double getDistance(const Point2D& p) const;
@@ -49,6 +51,7 @@ public:
     void draw(SDL_Renderer* rend) const;
     void move();
     double getHealth() const { return rgb.r + rgb.g + rgb.b; }
+    const RGB& getRGB() const { return rgb; }
 };
 
 
@@ -57,13 +60,9 @@ enum EventType{ noop=0, collision, wave, death};
 struct Event {
     Time time;
     EventType event;
-    union {
-        double srcAngle;
-        struct {
-            int triggeredSensorNumber;
-            int rgb;
-        };
-    };
+    double srcAngle;
+    int triggeredSensorNumber;
+    RGB rgb;
 };
 
 enum ActionType{ none=0, kickLeft, kickRight, kickBoth };
@@ -83,7 +82,7 @@ class Life {
     Time lastWave;    // last time this instance of Life generating a wave
     int inFd, outFd;  // agent IO file descriptors for receiving events and sending actions
 public:
-    Circle circle; // TODO: make this private
+    Circle circle;    // TODO: make this private
 
     Life(int inputFd, int outputFd): health(10.0), velocity(10,10), angle(10), circle(10,10,5), inFd(inputFd), outFd(outputFd) {
         lastWave = std::chrono::high_resolution_clock::now();

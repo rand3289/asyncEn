@@ -15,7 +15,7 @@ using namespace std::chrono;
 //
 // 'angle' is the angle at which the wave approaches/enters the circle
 // 'distance' is the distance from the center of the circle to the line of the wave
-void extrapolateWaveTravel(Life& life, double angle, double distance, const Time& time, const milliseconds& frameTime) {
+void extrapolateWaveTravel(Life& life, double angle, double distance, const Time& time, const milliseconds& frameTime, const RGB& rgb) {
     const int SENSOR_COUNT = 8; // 3+
     static Event evt = { .event = EventType::wave, .srcAngle = angle };
     // AI TODO: 
@@ -23,18 +23,19 @@ void extrapolateWaveTravel(Life& life, double angle, double distance, const Time
     // Imagine 'SENSOR_COUNT' number of sensors at equal distance apart around the circumference.
     // Implement this function to call life.event(evt) when a wave moving from left to right 
     // with 'waveSpeed' hits one of the sensors.
+    // Take into account Event::rgb which at time point 'time' is equal to rgb parameter but it decays at wave's fadeSpeed
 }
 
 void extrapolateWaveTravel(Life& life, const Wave& wave, const Time& time, const milliseconds& frameTime){
     double angle = life.circle.center.angle(wave.circle.center) + life.getAngle();
     double distance = life.circle.center.distance(wave.circle.center) - wave.circle.radius;
-    extrapolateWaveTravel(life, angle, distance, time, frameTime);
+    extrapolateWaveTravel(life, angle, distance, time, frameTime, wave.getRGB());
 }
 
 void extrapolateWaveTravel(Life& life, const WallWave& wave, const Time& time, const milliseconds& frameTime){
     double angle = wave.getCollisionAngle(life.getAngle());
     double distance = wave.getDistance(life.circle.center);
-    extrapolateWaveTravel(life, angle, distance, time, frameTime);
+    extrapolateWaveTravel(life, angle, distance, time, frameTime, wave.getRGB());
 }
 
 
@@ -152,9 +153,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
             if( life.circle.checkCollision(wave.circle) && !wave.circle.inside(life.circle) ){ // once wave passes Life, stop sending events
                 e.srcAngle = life.circle.center.angle(wave.circle.center);
                 life.event(e); // waves don't get events
-//                extrapolateWaveTravel(life, wave, time);
-//extrapolateWaveTravel(life.circle.center.x, life.circle.center.y, life.getAngle(), life.circle.radius, time, frameTime, wave.circle.center.x, wave.circle.center.y, wave.circle.radius);
-// TODO: extrapolate a wave movement through a Life (send multiple events) see wave.html for more info
+                // extrapolateWaveTravel(life, wave, time, frameTime); // wave movement through a Life (send multiple events) see wave.html
             }
         }
     }
