@@ -13,14 +13,16 @@ using namespace std::chrono;
 // extrapolate how a straight wave (line) travels through a circle of radius 'radius'
 // from left to right on the interval of time from (time - frameTime) till time 'time'
 //
-// 'radius' is the circle radius through which the wave travels
-// 'angle' is the angle at which the wave enters the circle
+// 'angle' is the angle at which the wave approaches/enters the circle
 // 'distance' is the distance from the center of the circle to the line of the wave
-void extrapolateWaveTravel(Life& life, double angle, double distance, const Time& time, const milliseconds& frameTime){
-//    life.circle.radius;
+void extrapolateWaveTravel(Life& life, double angle, double distance, const Time& time, const milliseconds& frameTime) {
+    const int SENSOR_COUNT = 8; // 3+
     static Event evt = { .event = EventType::wave, .srcAngle = angle };
-
-    life.event(evt);
+    // AI TODO: 
+    // Life is represented by a circle with a radius 'life.circle.radius'
+    // Imagine 'SENSOR_COUNT' number of sensors at equal distance apart around the circumference.
+    // Implement this function to call life.event(evt) when a wave moving from left to right 
+    // with 'waveSpeed' hits one of the sensors.
 }
 
 void extrapolateWaveTravel(Life& life, const Wave& wave, const Time& time, const milliseconds& frameTime){
