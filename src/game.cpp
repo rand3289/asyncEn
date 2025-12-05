@@ -7,6 +7,7 @@
 #include <thread>     // sleep_for()
 #include <algorithm>  // sort()
 #include <chrono>
+#include <cmath>      // for M_PI, cos, sin, exp
 using namespace std::chrono;
 
 
@@ -15,15 +16,31 @@ using namespace std::chrono;
 //
 // 'angle' is the angle at which the wave approaches/enters the circle
 // 'distance' is the distance from the center of the circle to the line of the wave
+// AI TODO: Life is represented by a circle with a radius 'life.circle.radius'.
+// Imagine 'SENSOR_COUNT' number of sensors at equal distance apart around the circumference.
+// Implement this function to call life.event(evt) when a wave moving from left to right with 'waveSpeed' hits one of the sensors.
+// Take into account Event::rgb which at time point 'time' is equal to rgb parameter but it decays at wave's fadeSpeed.
 void extrapolateWaveTravel(Life& life, double angle, double distance, const Time& time, const milliseconds& frameTime, const RGB& rgb) {
     const int SENSOR_COUNT = 8; // 3+
-    static Event evt = { .event = EventType::wave, .srcAngle = angle };
-    // AI TODO: 
-    // Life is represented by a circle with a radius 'life.circle.radius'
-    // Imagine 'SENSOR_COUNT' number of sensors at equal distance apart around the circumference.
-    // Implement this function to call life.event(evt) when a wave moving from left to right 
-    // with 'waveSpeed' hits one of the sensors.
-    // Take into account Event::rgb which at time point 'time' is equal to rgb parameter but it decays at wave's fadeSpeed
+    const double waveSpeed = 2.0;
+    const double fadeSpeed = 2.0;
+
+    for (int i = 0; i < SENSOR_COUNT; i++) {
+        double sensorAngle = (2.0 * M_PI * i) / SENSOR_COUNT;
+        double sensorX = life.circle.center.x + life.circle.radius * cos(sensorAngle);
+        double sensorY = life.circle.center.y + life.circle.radius * sin(sensorAngle);
+        
+        double waveToSensorDistance = distance + (sensorX * cos(angle) + sensorY * sin(angle));
+        double timeToHit = waveToSensorDistance / waveSpeed;
+        
+        if (timeToHit >= 0 && timeToHit <= frameTime.count() / 1000.0) {
+            double fadeAmount = exp(-fadeSpeed * timeToHit);
+            RGB fadedRgb = { rgb.r * fadeAmount, rgb.g * fadeAmount, rgb.b * fadeAmount };
+            
+            Event evt = { .time = time, .event = EventType::wave, .srcAngle = angle, .triggeredSensorNumber = i, .rgb = fadedRgb };
+            life.event(evt);
+        }
+    }
 }
 
 void extrapolateWaveTravel(Life& life, const Wave& wave, const Time& time, const milliseconds& frameTime){
