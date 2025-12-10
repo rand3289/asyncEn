@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
+#include <cmath>
 
 #define RADIAN (180.0/M_PI) // degrees in one radian
 
