@@ -77,14 +77,13 @@ class Life {
     const double speed = 1.0;
     double health;
     RGB color;
-    Point2D velocity; // TODO: this is currently unused
     double angle;     // direction of movement
-    Time lastWave;    // last time this instance of Life generating a wave
+    Time lastWave;    // last time this instance of Life generated a wave
     int inFd, outFd;  // agent IO file descriptors for receiving events and sending actions
 public:
     Circle circle;    // TODO: make this private
 
-    Life(int inputFd, int outputFd): health(10.0), velocity(10,10), angle(10), circle(10,10,5), inFd(inputFd), outFd(outputFd) {
+    Life(int inputFd, int outputFd): health(10.0), angle(10), circle(10,10,5), inFd(inputFd), outFd(outputFd) {
         lastWave = std::chrono::high_resolution_clock::now();
         color.r = rand()%201 + 55;
         color.g = rand()%201 + 55;
@@ -92,8 +91,8 @@ public:
         circle.center.x = rand()%700; // TODO: fix this
         circle.center.y = rand()%700;
     }
-    Life(const Life& other): health(other.health), color(other.color), circle(other.circle), velocity(other.velocity), angle(other.angle), inFd(other.inFd), outFd(other.outFd) { lastWave = std::chrono::high_resolution_clock::now(); }
-    Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), velocity(std::move(other.velocity)), angle(other.angle), inFd(other.inFd), outFd(other.outFd) { lastWave = std::chrono::high_resolution_clock::now(); }
+    Life(const Life& other): health(other.health), color(other.color), circle(other.circle), angle(other.angle), inFd(other.inFd), outFd(other.outFd) { lastWave = std::chrono::high_resolution_clock::now(); }
+    Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), angle(other.angle), inFd(other.inFd), outFd(other.outFd) { lastWave = std::chrono::high_resolution_clock::now(); }
     Life& operator=(const Life& other);
 
     void draw(SDL_Renderer* rend) const; // draws on screen ONLY!

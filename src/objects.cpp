@@ -159,7 +159,6 @@ Life& Life::operator=(const Life& other) {
         health = other.health;
         color = other.color;
         circle = other.circle;
-        velocity = other.velocity;
         angle = other.angle;
         lastWave = other.lastWave;
         inFd = other.inFd;
