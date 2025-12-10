@@ -81,9 +81,11 @@ public:
 
     Life(int inputFd, int outputFd): health(10.0), color(), angle(10), lastWave(), inFd(inputFd), outFd(outputFd), circle(rand()%700, rand()%700, 5) { }
     Life(const Life& other): health(other.health), color(other.color), angle(other.angle), lastWave(other.lastWave), inFd(other.inFd), outFd(other.outFd), circle(other.circle) { }
-    Life(Life&& other) noexcept: health(other.health), color(std::move(other.color)), angle(other.angle), lastWave(std::move(other.lastWave)), inFd(other.inFd), outFd(other.outFd), circle(std::move(other.circle)) { }
+    Life(Life&& other) noexcept: health(other.health), color(std::move(other.color)), angle(other.angle), lastWave(std::move(other.lastWave)),
+        inFd(other.inFd), outFd(other.outFd), circle(std::move(other.circle)) { other.inFd = -1; other.outFd = -1; }
+    // Move constructor marks the other object's handles invalid so they can be closed in destructor after 'other' object is destroyed
+    // OTHERWISE DO NOT CLOSE HANDLES IN DESTRUCTOR !!!  ~Life(){ close(inFd); close(outFd); }
     Life& operator=(const Life& other);
-    ~Life(){ close(inFd); close(outFd); }
 
     void draw(SDL_Renderer* rend) const; // draws on screen ONLY!
     void move(const Time& t);            // calculates things

@@ -124,7 +124,7 @@ void Life::event(const Event& e){
             size = sprintf(buff, "2,%d ", e.srcAngle);
             break;
         case EventType::death:
-            size = sprintf(buff, "3 ");
+            size = sprintf(buff, "3,0 ");
             break;
         default: return;
     }
@@ -136,13 +136,19 @@ void Life::move(const Time& t){
     static const Point2D unitVector(speed, 0);
 
     char buff[128];
-    if( read(outFd, buff, sizeof(buff)) > 0 ){
+    size_t rd = read(outFd, buff, sizeof(buff)-1);
+    if( rd > 0 ){
+        buff[rd] = 0;
         ActionType action = (ActionType) atoi(buff);
         switch(action){
             case ActionType::kickLeft:  angle-=10.0; break;
             case ActionType::kickRight: angle+=10.0; break;
             case ActionType::kickBoth:  break;
-            default: return;
+            case ActionType::none:      return;
+            default:
+                std::cout << buff << std::endl;
+                std::cout.flush();
+                return;
         }
         // create a "unit vector", rotate it by angle, translate position using unit vector
         circle.center = circle.center.translate( unitVector.rotate(angle) );

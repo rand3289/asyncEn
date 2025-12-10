@@ -7,4 +7,4 @@ clean:
 	/bin/rm asyncen easya keypad
 
 run:
-	asyncen easya keypad
+	asyncen easya keypad easya easya
