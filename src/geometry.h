@@ -7,7 +7,7 @@
 
 struct RGB{
     double r,g,b;
-    RGB(): r(0.0),g(0.0),b(0.0) {}
+    RGB(): r(rand()%201 + 55), g(rand()%201 + 55), b(rand()%201 + 55) { }
     RGB(double R, double G, double B): r(R), g(G), b(B) {}
     RGB(const RGB& rgb): r(rgb.r), g(rgb.g), b(rgb.b) {}
     RGB(RGB&& rgb) noexcept: r(rgb.r), g(rgb.g), b(rgb.b) {}

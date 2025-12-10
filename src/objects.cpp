@@ -137,12 +137,11 @@ void Life::move(const Time& t){
 
     char buff[128];
     if( read(outFd, buff, sizeof(buff)) > 0 ){
-        Action a; // TODO: this datastructure might not be needed
-        a.action = (ActionType) atoi(buff);
-        switch(a.action){
+        ActionType action = (ActionType) atoi(buff);
+        switch(action){
             case ActionType::kickLeft:  angle-=10.0; break;
             case ActionType::kickRight: angle+=10.0; break;
-            case ActionType::kickBoth: break;
+            case ActionType::kickBoth:  break;
             default: return;
         }
         // create a "unit vector", rotate it by angle, translate position using unit vector
@@ -158,11 +157,11 @@ Life& Life::operator=(const Life& other) {
     if (this != &other) {
         health = other.health;
         color = other.color;
-        circle = other.circle;
         angle = other.angle;
         lastWave = other.lastWave;
         inFd = other.inFd;
         outFd = other.outFd;
+        circle = other.circle;
     }
     return *this;
 }

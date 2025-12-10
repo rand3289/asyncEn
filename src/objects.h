@@ -1,6 +1,7 @@
 #pragma once
 #include "geometry.h"
 #include <SDL2/SDL.h>
+#include <unistd.h> // close()
 #include <chrono>
 
 typedef std::chrono::high_resolution_clock::time_point Time;
@@ -55,6 +56,8 @@ public:
 };
 
 
+enum ActionType{ none=0, kickLeft, kickRight, kickBoth };
+
 enum EventType{ noop=0, collision, wave, death};
 
 struct Event {
@@ -63,13 +66,6 @@ struct Event {
     double srcAngle;
     int triggeredSensorNumber;
     RGB rgb;
-};
-
-enum ActionType{ none=0, kickLeft, kickRight, kickBoth };
-
-struct Action {
-    Time time;
-    ActionType action;
 };
 
 
@@ -83,17 +79,11 @@ class Life {
 public:
     Circle circle;    // TODO: make this private
 
-    Life(int inputFd, int outputFd): health(10.0), angle(10), circle(10,10,5), inFd(inputFd), outFd(outputFd) {
-        lastWave = std::chrono::high_resolution_clock::now();
-        color.r = rand()%201 + 55;
-        color.g = rand()%201 + 55;
-        color.b = rand()%201 + 55;
-        circle.center.x = rand()%700; // TODO: fix this
-        circle.center.y = rand()%700;
-    }
-    Life(const Life& other): health(other.health), color(other.color), circle(other.circle), angle(other.angle), inFd(other.inFd), outFd(other.outFd) { lastWave = std::chrono::high_resolution_clock::now(); }
-    Life(Life&& other) noexcept: health(other.health), color(other.color), circle(std::move(other.circle)), angle(other.angle), inFd(other.inFd), outFd(other.outFd) { lastWave = std::chrono::high_resolution_clock::now(); }
+    Life(int inputFd, int outputFd): health(10.0), color(), angle(10), lastWave(), inFd(inputFd), outFd(outputFd), circle(rand()%700, rand()%700, 5) { }
+    Life(const Life& other): health(other.health), color(other.color), angle(other.angle), lastWave(other.lastWave), inFd(other.inFd), outFd(other.outFd), circle(other.circle) { }
+    Life(Life&& other) noexcept: health(other.health), color(std::move(other.color)), angle(other.angle), lastWave(std::move(other.lastWave)), inFd(other.inFd), outFd(other.outFd), circle(std::move(other.circle)) { }
     Life& operator=(const Life& other);
+    ~Life(){ close(inFd); close(outFd); }
 
     void draw(SDL_Renderer* rend) const; // draws on screen ONLY!
     void move(const Time& t);            // calculates things
