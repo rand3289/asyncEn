@@ -36,11 +36,11 @@ int main(int argc, char* argv[]){
             if(e.type == SDL_QUIT){ run=false; }
             else if (e.type == SDL_KEYDOWN){
                 switch(e.key.keysym.sym){
-                    case SDLK_ESCAPE: run=false;       break;
-                    case SDLK_LEFT:  std::cout << '1'; break;
-                    case SDLK_UP:    std::cout << '3'; break;
-                    case SDLK_RIGHT: std::cout << '2'; break;
-                    default:                           break;
+                    case SDLK_ESCAPE: run=false;             break;
+                    case SDLK_LEFT:  std::cout << "0,1,0\n"; break;
+                    case SDLK_RIGHT: std::cout << "0,2,0\n"; break;
+                    case SDLK_UP:    std::cout << "0,3,0\n"; break;
+                    default:                                 break;
                 }
                 std::cout.flush();
             }

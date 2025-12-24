@@ -11,6 +11,16 @@
 using namespace std::chrono;
 
 
+double normalizeAngle(double angle){
+    while(angle <= 0.0){
+        angle += 360.0;
+    }
+    while(angle > 360.0){
+        angle -= 360.0;
+    }
+    return angle;
+}
+
 // extrapolate how a straight wave (line) travels through a circle of radius 'radius'
 // from left to right on the interval of time from (time - frameTime) till time 'time'
 //
@@ -37,7 +47,7 @@ void extrapolateWaveTravel(Life& life, double angle, double distance, int64_t ti
             double fadeAmount = exp(-fadeSpeed * timeToHit);
             RGB fadedRgb = { rgb.r * fadeAmount, rgb.g * fadeAmount, rgb.b * fadeAmount };
             
-            Event evt = { .time = time, .event = EventType::wave, .srcAngle = angle, .triggeredSensorNumber = i, .rgb = fadedRgb };
+            Event evt = { .time = time, .event = EventType::wave, .srcAngle = normalizeAngle(angle), .triggeredSensorNumber = i, .rgb = fadedRgb };
             life.event(evt);
         }
     }
@@ -112,7 +122,6 @@ void Game::event(SDL_Event& e){
     }
 }
 
-
 void Game::draw(SDL_Renderer* rend, int width, int height){
     const int fps = 30;
     const auto frameTime = std::chrono::nanoseconds(1000000000/fps);
@@ -151,6 +160,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
             e.srcAngle = -90-life.getAngle();
             wallWaves.emplace_back(height, WallWaveType::horisontal_up);
         } else { continue; }
+        e.srcAngle = normalizeAngle(e.srcAngle);
         life.event(e);
     }
 
@@ -159,8 +169,10 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
         for (size_t j = i + 1; j < lives.size(); ++j) {
             if ( lives[i].circle.checkCollision(lives[j].circle) ) {
                 e.srcAngle = lives[i].circle.center.angle(lives[j].circle.center);
+                e.srcAngle = normalizeAngle(e.srcAngle);
                 lives[i].event(e);
                 e.srcAngle += 180;
+                e.srcAngle = normalizeAngle(e.srcAngle);
                 lives[j].event(e);
                 lives[i].circle.pushApart(lives[j].circle); // push collided lives apart
                 // TODO: shouldn't collisions cause waves ???
@@ -204,10 +216,14 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     }
 
     // check collisions between lives and waves
+    e.event = EventType::wave;
+    e.time = us;
     for (Life& life: lives) {
         for (const Wave& wave: waves) {
             if( life.circle.checkCollision(wave.circle) && !wave.circle.inside(life.circle) ){ // once wave passes Life, stop sending events
-                extrapolateWaveTravel(life, wave, us, frameTime.count()/1000); // wave movement through a Life (send multiple events) see wave.html
+                e.srcAngle = life.circle.center.angle(wave.circle.center);
+                life.event(e);
+//                extrapolateWaveTravel(life, wave, us, frameTime.count()/1000); // wave movement through a Life (send multiple events) see wave.html
             }
         }
     }
@@ -216,7 +232,9 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     for (Life& life: lives) {
         for (const WallWave& wave: wallWaves) {
             if(wave.checkCollision(life.circle)){
-                extrapolateWaveTravel(life, wave, us, frameTime.count()/1000); // wave movement through a Life (send multiple events) see wave.html
+                e.srcAngle = wave.getCollisionAngle(life.getAngle());
+                life.event(e);
+//                extrapolateWaveTravel(life, wave, us, frameTime.count()/1000); // wave movement through a Life (send multiple events) see wave.html
             }
         }
     }

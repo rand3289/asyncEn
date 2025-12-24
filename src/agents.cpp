@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 
+// TODO: keep the list of processes and kill them all when exiting
 
 static void setNonBlock(int fd) { // Set non-blocking mode
     int flags = fcntl(fd, F_GETFL, 0);

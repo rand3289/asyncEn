@@ -118,10 +118,10 @@ void Life::event(const Event& e){
     char buff[32];
     switch(e.event){
         case EventType::wave:
-            size = sprintf(buff, "1,%d,%d\n", e.time, e.srcAngle);
+            size = sprintf(buff, "1,%d,%d\n", e.time, (int) e.srcAngle);
             break;
         case EventType::collision:
-            size = sprintf(buff, "2,%d,%d\n", e.time, e.srcAngle);
+            size = sprintf(buff, "2,%d,%d\n", e.time, (int) e.srcAngle);
             break;
         case EventType::death:
             size = sprintf(buff, "3,%d,0\n", e.time);
@@ -139,14 +139,17 @@ void Life::move(const Time& t){
     size_t rd = read(outFd, buff, sizeof(buff)-1);
     if( rd > 0 ){
         buff[rd] = 0;
-        ActionType action = (ActionType) atoi(buff);
+        int time, action, param;
+        if(3 != sscanf(buff, "%d,%d,%d\n", &time, &action, &param)){
+            return;
+        }
         switch(action){
             case ActionType::kickLeft:  angle-=10.0; break;
             case ActionType::kickRight: angle+=10.0; break;
             case ActionType::kickBoth:  break;
             case ActionType::none:      return;
             default:
-                std::cout << buff << std::endl;
+                std::cout << "\nUnknown command from agent: " << buff << std::endl;
                 std::cout.flush();
                 return;
         }
