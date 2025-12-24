@@ -20,7 +20,7 @@ using namespace std::chrono;
 // Imagine 'SENSOR_COUNT' number of sensors at equal distance apart around the circumference.
 // Implement this function to call life.event(evt) when a wave moving from left to right with 'waveSpeed' hits one of the sensors.
 // Take into account Event::rgb which at time point 'time' is equal to rgb parameter but it decays at wave's fadeSpeed.
-void extrapolateWaveTravel(Life& life, double angle, double distance, const Time& time, const milliseconds& frameTime, const RGB& rgb) {
+void extrapolateWaveTravel(Life& life, double angle, double distance, int64_t time, int64_t frameTime, const RGB& rgb) {
     const int SENSOR_COUNT = 8; // 3+
     const double waveSpeed = 2.0;
     const double fadeSpeed = 2.0;
@@ -33,7 +33,7 @@ void extrapolateWaveTravel(Life& life, double angle, double distance, const Time
         double waveToSensorDistance = distance + (sensorX * cos(angle) + sensorY * sin(angle));
         double timeToHit = waveToSensorDistance / waveSpeed;
         
-        if (timeToHit >= 0 && timeToHit <= frameTime.count() / 1000.0) {
+        if (timeToHit >= 0 && timeToHit <= frameTime) {
             double fadeAmount = exp(-fadeSpeed * timeToHit);
             RGB fadedRgb = { rgb.r * fadeAmount, rgb.g * fadeAmount, rgb.b * fadeAmount };
             
@@ -43,13 +43,13 @@ void extrapolateWaveTravel(Life& life, double angle, double distance, const Time
     }
 }
 
-void extrapolateWaveTravel(Life& life, const Wave& wave, const Time& time, const milliseconds& frameTime){
+void extrapolateWaveTravel(Life& life, const Wave& wave, int64_t time, int64_t frameTime){
     double angle = life.circle.center.angle(wave.circle.center) + life.getAngle();
     double distance = life.circle.center.distance(wave.circle.center) - wave.circle.radius;
     extrapolateWaveTravel(life, angle, distance, time, frameTime, wave.getRGB());
 }
 
-void extrapolateWaveTravel(Life& life, const WallWave& wave, const Time& time, const milliseconds& frameTime){
+void extrapolateWaveTravel(Life& life, const WallWave& wave, int64_t time, int64_t frameTime){
     double angle = wave.getCollisionAngle(life.getAngle());
     double distance = wave.getDistance(life.circle.center);
     extrapolateWaveTravel(life, angle, distance, time, frameTime, wave.getRGB());
@@ -115,7 +115,7 @@ void Game::event(SDL_Event& e){
 
 void Game::draw(SDL_Renderer* rend, int width, int height){
     const int fps = 30;
-    const auto frameTime = std::chrono::milliseconds(1000/fps);
+    const auto frameTime = std::chrono::nanoseconds(1000000000/fps);
     static auto nextTime = std::chrono::high_resolution_clock::now();
     auto time = std::chrono::high_resolution_clock::now();
 
@@ -126,8 +126,13 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     }
     nextTime += frameTime;
 
+    // epoch for measuring uptime
+    const static auto epoch = std::chrono::high_resolution_clock::now();
+    int64_t ns = (time -epoch).count();
+    int64_t us = ns/1000;
+
     // check collisions with walls and push circles away from the walls
-    Event e = {time, EventType::collision, 0.0};
+    Event e = {us, EventType::collision, 0.0};
     for(Life& life: lives){
         if(life.circle.center.x <= 0){
             life.circle.center.x = life.circle.radius;
@@ -202,7 +207,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     for (Life& life: lives) {
         for (const Wave& wave: waves) {
             if( life.circle.checkCollision(wave.circle) && !wave.circle.inside(life.circle) ){ // once wave passes Life, stop sending events
-                extrapolateWaveTravel(life, wave, time, frameTime); // wave movement through a Life (send multiple events) see wave.html
+                extrapolateWaveTravel(life, wave, us, frameTime.count()/1000); // wave movement through a Life (send multiple events) see wave.html
             }
         }
     }
@@ -211,7 +216,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     for (Life& life: lives) {
         for (const WallWave& wave: wallWaves) {
             if(wave.checkCollision(life.circle)){
-                extrapolateWaveTravel(life, wave, time, frameTime); // wave movement through a Life (send multiple events) see wave.html
+                extrapolateWaveTravel(life, wave, us, frameTime.count()/1000); // wave movement through a Life (send multiple events) see wave.html
             }
         }
     }

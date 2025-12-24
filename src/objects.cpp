@@ -118,13 +118,13 @@ void Life::event(const Event& e){
     char buff[32];
     switch(e.event){
         case EventType::wave:
-            size = sprintf(buff, "1,%d ", e.srcAngle);
+            size = sprintf(buff, "1,%d,%d\n", e.time, e.srcAngle);
             break;
         case EventType::collision:
-            size = sprintf(buff, "2,%d ", e.srcAngle);
+            size = sprintf(buff, "2,%d,%d\n", e.time, e.srcAngle);
             break;
         case EventType::death:
-            size = sprintf(buff, "3,0 ");
+            size = sprintf(buff, "3,%d,0\n", e.time);
             break;
         default: return;
     }

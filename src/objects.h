@@ -61,7 +61,7 @@ enum ActionType{ none=0, kickLeft, kickRight, kickBoth };
 enum EventType{ noop=0, collision, wave, death};
 
 struct Event {
-    Time time;
+    int64_t time; // microseconds
     EventType event;
     double srcAngle;
     int triggeredSensorNumber;
