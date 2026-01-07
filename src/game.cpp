@@ -123,8 +123,8 @@ void Game::event(SDL_Event& e){
 }
 
 void Game::draw(SDL_Renderer* rend, int width, int height){
-    const int fps = 30;
-    const auto frameTime = std::chrono::nanoseconds(1000000000/fps);
+    constexpr int fps = 30;
+    const static auto frameTime = std::chrono::nanoseconds(1000000000/fps);
     static auto nextTime = std::chrono::high_resolution_clock::now();
     auto time = std::chrono::high_resolution_clock::now();
 
@@ -135,10 +135,10 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     }
     nextTime += frameTime;
 
-    // epoch for measuring uptime
-    const static auto epoch = std::chrono::high_resolution_clock::now();
-    int64_t ns = (time -epoch).count();
-    int64_t us = ns/1000;
+    // epoch for measuring uptime.  Moving from C++11 to C++20 because of this line:
+    const static auto epoch = std::chrono::floor<std::chrono::days>(high_resolution_clock::now());
+//    std::cout <<  "asyncEn epoch: " << epoch.time_since_epoch() << std::endl;
+    int64_t us = (time - epoch).count() / 1000;
 
     // check collisions with walls and push circles away from the walls
     Event e = {us, EventType::collision, 0.0};

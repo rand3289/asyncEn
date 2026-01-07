@@ -19,8 +19,8 @@ int main(int argc, char* argv[]) {
         int event, time, param;
         ssize_t rd = scanf("%d,%d,%d\n", &event, &time, &param);
         if(3==rd){ // print to console through stderr for debugging
-            fprintf(stderr, "%d,%d,%d\t", event, time/1000, param);
-            fflush(stderr);
+//            fprintf(stderr, "%d,%d,%d\t", event, time/1000, param);
+//            fflush(stderr);
         }
 
         // the format is time, action, parameter
