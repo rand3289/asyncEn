@@ -54,6 +54,7 @@ inline void line(SDL_Renderer* rend, const Point2D& p1, const Point2D& p2){
     SDL_RenderDrawLine(rend, p1.x, p1.y , p2.x, p2.y);
 }
 
+double normalizeAngle(double angle); // get it within [0,360]
 
 void drawCircle(SDL_Renderer* rend, int32_t centreX, int32_t centreY, int32_t radius);
 

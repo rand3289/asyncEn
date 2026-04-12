@@ -1,9 +1,9 @@
 # asyncEn
-asyncEn is a minimalistic event based environment for testing AI algorithms that consume events such as spiking neural networks.  
+asyncEn is a minimalistic environment for testing AI algorithms that consume events such as spiking neural networks.  
+The simulation takes place on a surface and generates waves during collisions and kicks.  
 This is the simplest environment I could write.  Everything is a circle or a horisontal/vertical line to simplify collision detection.  
 Agents driving objects' behavior send momentary actions and receive events from the environment.  
 Actions are left/right/forward kicks to propell the objects.  Events include collisions and wave interactions.  
-Simulation takes place on a surface that generates waves during collisions and kicks.
 
 ![asyncEn screenshot](screenshot.png)  
 

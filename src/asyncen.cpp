@@ -35,8 +35,8 @@ int main(int argc, char* argv[]){
     int width, height;
     SDL_GetWindowSize(window, &width, &height); // toggleFS(window, &width, &height);
 
+    setenv("SDL_VIDEO_ALLOW_SCREENSAVER","1",1); // do this before SDL_Init() ?
     SDL_EnableScreenSaver(); // disabled by default
-    setenv("SDL_VIDEO_ALLOW_SCREENSAVER","1",1);
 
     Game& game = Game::getInstance();
     SDL_Event e;

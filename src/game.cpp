@@ -10,17 +10,6 @@
 #include <cmath>      // for M_PI, cos, sin, exp
 
 
-double normalizeAngle(double angle){
-    while(angle <= 0.0){
-        angle += 360.0;
-    }
-    while(angle > 360.0){
-        angle -= 360.0;
-    }
-    return angle;
-}
-
-
 Game& Game::getInstance() {
     static Game* instance;
     if(!instance){
@@ -182,7 +171,7 @@ void Game::move(int width, int height, int64_t timeUs){
         waves[i].move();
     }
 
-    // move waves from the walls or delete them if health < 0
+    // move waves produced by walls or delete them if health < 0
     for(int i=0; i< wallWaves.size(); ++i){
         if(wallWaves[i].getHealth() <= 0){ // remove waves that have dissipated
             wallWaves.erase(wallWaves.begin() + i);
