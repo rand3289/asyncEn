@@ -15,7 +15,7 @@ void Wave::draw(SDL_Renderer* rend) const {
 }
 
 void Wave::move() {
-    circle.radius += waveSpeed;
+    circle.radius += speed;
     rgb.r = rgb.r>fadeSpeed ? rgb.r-fadeSpeed : 0.0;
     rgb.g = rgb.g>fadeSpeed ? rgb.g-fadeSpeed : 0.0;
     rgb.b = rgb.b>fadeSpeed ? rgb.b-fadeSpeed : 0.0;
@@ -51,10 +51,10 @@ void WallWave::draw(SDL_Renderer* rend, int width, int height) const {
 
 void WallWave::move(){
     switch(type){
-        case WallWaveType::horisontal_down: loc+=waveSpeed; break;
-        case WallWaveType::horisontal_up:   loc-=waveSpeed; break;
-        case WallWaveType::vertical_left:   loc-=waveSpeed; break;
-        case WallWaveType::vertical_right:  loc+=waveSpeed; break;
+        case WallWaveType::horisontal_down: loc+=speed; break;
+        case WallWaveType::horisontal_up:   loc-=speed; break;
+        case WallWaveType::vertical_left:   loc-=speed; break;
+        case WallWaveType::vertical_right:  loc+=speed; break;
     }
     rgb.r = rgb.r>fadeSpeed ? rgb.r-fadeSpeed : 0.0;
     rgb.g = rgb.g>fadeSpeed ? rgb.g-fadeSpeed : 0.0;
@@ -62,13 +62,13 @@ void WallWave::move(){
 }
 
 
-double WallWave::getDistance(const Point2D& p) const {
-    if(type==horisontal_down || type == horisontal_up){
-        return abs(loc - p.y);
-    } else {
-        return abs(loc - p.x);
-    }
-}
+// double WallWave::getDistance(const Point2D& p) const {
+//     if(type==horisontal_down || type == horisontal_up){
+//         return abs(loc - p.y);
+//     } else {
+//         return abs(loc - p.x);
+//     }
+// }
 
 // check collision of a WallWave and Life
 bool WallWave::checkCollision(const Circle& circle) const {

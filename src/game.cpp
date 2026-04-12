@@ -63,7 +63,7 @@ void Game::event(SDL_Event& e){
 }
 
 
-int64_t timeNowUs(){
+int64_t timeNowUs(){ // current time in microseconds
     const static auto epoch = std::chrono::floor<std::chrono::days>(std::chrono::high_resolution_clock::now());
     auto now = std::chrono::high_resolution_clock::now();
     return (now - epoch).count() / 1000; // microseconds from the beginning of the day

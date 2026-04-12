@@ -2,11 +2,11 @@
 #include "geometry.h"
 #include <SDL2/SDL.h>
 
-#define WAVE_SPEED (0.1) // this is related to "moves_per_frame" in game.cpp
+#define WAVE_SPEED (0.1) // related to "movesPerFrame" in Game::draw() [game.cpp]
 
 class Wave {
-    const double waveSpeed = WAVE_SPEED;
-    const double fadeSpeed = WAVE_SPEED;
+    constexpr static double speed = WAVE_SPEED;
+    constexpr static double fadeSpeed = WAVE_SPEED;
     RGB rgb; // SDL_FColor color floating point r,g,b available since SDL 3.2.0.
 public:
     Circle circle; // TODO: make this private
@@ -27,8 +27,8 @@ public:
 enum WallWaveType {vertical_right, vertical_left, horisontal_up, horisontal_down};
 
 class WallWave {
-    const double waveSpeed = WAVE_SPEED;
-    const double fadeSpeed = WAVE_SPEED;
+    constexpr static double speed = WAVE_SPEED;
+    constexpr static double fadeSpeed = WAVE_SPEED;
     RGB rgb;
     double loc;
     WallWaveType type;
@@ -43,7 +43,6 @@ public:
     double getHealth() const { return rgb.r + rgb.g + rgb.b; }
     const RGB& getRGB() const { return rgb; }
 
-    double getDistance(const Point2D& p) const;
     bool checkCollision(const Circle& circle) const;
     double getCollisionAngle(double angle) const;
 

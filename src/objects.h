@@ -18,7 +18,7 @@ struct Event {
 
 
 class Life {
-    const double speed = WAVE_SPEED;
+    constexpr static double speed = WAVE_SPEED;
     double health;
     RGB color;
     double angle;           // direction of movement
