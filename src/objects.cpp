@@ -131,8 +131,7 @@ void Life::event(const Event& e){
     write(inFd,buff,size);
 }
 
-void Life::move(const Time& t){
-    static Game& game = Game::getInstance();
+void Life::move(int64_t timeUs){
     static const Point2D unitVector(speed, 0);
 
     char buff[128];
@@ -155,9 +154,12 @@ void Life::move(const Time& t){
         }
         // create a "unit vector", rotate it by angle, translate position using unit vector
         circle.center = circle.center.translate( unitVector.rotate(angle) );
-        if( t - lastWave > std::chrono::milliseconds(500) ){
+
+        if( timeUs > nextWaveTimeUs ){
+            static Game& game = Game::getInstance();
             game.addWave(color, circle.center); // every movement kicks up a wave
-            lastWave = t;
+            constexpr int64_t halfSecond = 500000; // in microseconds
+            nextWaveTimeUs = timeUs+halfSecond;
         }
     }
 }
@@ -167,7 +169,7 @@ Life& Life::operator=(const Life& other) {
         health = other.health;
         color = other.color;
         angle = other.angle;
-        lastWave = other.lastWave;
+        nextWaveTimeUs = other.nextWaveTimeUs;
         inFd = other.inFd;
         outFd = other.outFd;
         circle = other.circle;

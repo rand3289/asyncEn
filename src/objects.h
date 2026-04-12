@@ -4,14 +4,15 @@
 #include <unistd.h> // close()
 #include <chrono>
 
+#define WAVE_SPEED (0.1) // this is related to "moves_per_frame" in game.cpp
 typedef std::chrono::high_resolution_clock::time_point Time;
 
 
 enum WallWaveType{vertical_right, vertical_left, horisontal_up, horisontal_down};
 
 class WallWave {
-    const double waveSpeed = 2.0;
-    const double fadeSpeed = 2.0;
+    const double waveSpeed = WAVE_SPEED;
+    const double fadeSpeed = WAVE_SPEED;
     RGB rgb;
     double loc;
     WallWaveType type;
@@ -37,8 +38,8 @@ public:
 
 
 class Wave {
-    const double waveSpeed = 2.0;
-    const double fadeSpeed = 2.0;
+    const double waveSpeed = WAVE_SPEED;
+    const double fadeSpeed = WAVE_SPEED;
     RGB rgb; // SDL_FColor color floating point r,g,b available since SDL 3.2.0.
 public:
     Circle circle; // TODO: make this private
@@ -70,25 +71,25 @@ struct Event {
 
 
 class Life {
-    const double speed = 1.0;
+    const double speed = WAVE_SPEED;
     double health;
     RGB color;
-    double angle;     // direction of movement
-    Time lastWave;    // last time this instance of Life generated a wave
-    int inFd, outFd;  // agent IO file descriptors for receiving events and sending actions
+    double angle;           // direction of movement
+    int64_t nextWaveTimeUs; // last time this instance of Life generated a wave
+    int inFd, outFd;        // agent IO file descriptors for receiving events and sending actions
 public:
     Circle circle;    // TODO: make this private
 
-    Life(int inputFd, int outputFd): health(10.0), color(), angle(10), lastWave(), inFd(inputFd), outFd(outputFd), circle(rand()%700, rand()%700, 5) { }
-    Life(const Life& other): health(other.health), color(other.color), angle(other.angle), lastWave(other.lastWave), inFd(other.inFd), outFd(other.outFd), circle(other.circle) { }
-    Life(Life&& other) noexcept: health(other.health), color(std::move(other.color)), angle(other.angle), lastWave(std::move(other.lastWave)),
+    Life(int inputFd, int outputFd): health(10.0), color(), angle(10), nextWaveTimeUs(), inFd(inputFd), outFd(outputFd), circle(rand()%700, rand()%700, 5) { }
+    Life(const Life& other): health(other.health), color(other.color), angle(other.angle), nextWaveTimeUs(other.nextWaveTimeUs), inFd(other.inFd), outFd(other.outFd), circle(other.circle) { }
+    Life(Life&& other) noexcept: health(other.health), color(std::move(other.color)), angle(other.angle), nextWaveTimeUs(std::move(other.nextWaveTimeUs)),
         inFd(other.inFd), outFd(other.outFd), circle(std::move(other.circle)) { other.inFd = -1; other.outFd = -1; }
     // Move constructor marks the other object's handles invalid so they can be closed in destructor after 'other' object is destroyed
     // OTHERWISE DO NOT CLOSE HANDLES IN DESTRUCTOR !!!  ~Life(){ close(inFd); close(outFd); }
     Life& operator=(const Life& other);
 
     void draw(SDL_Renderer* rend) const; // draws on screen ONLY!
-    void move(const Time& t);            // calculates things
+    void move(int64_t timeUs);            // calculates things
     double getHealth() const { return health; }
 
     double getAngle() const { return angle; }

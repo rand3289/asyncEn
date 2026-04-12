@@ -122,9 +122,11 @@ void Game::event(SDL_Event& e){
     }
 }
 
+
 void Game::draw(SDL_Renderer* rend, int width, int height){
-    constexpr int fps = 30;
-    const static auto frameTime = std::chrono::nanoseconds(1000000000/fps);
+    constexpr int fps = 30; // frames per second
+    constexpr int nsps = 1000000000; // nanoseconds per second
+    const static auto frameTime = std::chrono::nanoseconds(nsps/fps);
     static auto nextTime = std::chrono::high_resolution_clock::now();
     auto time = std::chrono::high_resolution_clock::now();
 
@@ -135,13 +137,38 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     }
     nextTime += frameTime;
 
+    for(int i=0; i < lives.size(); ++i){
+        lives[i].draw(rend);
+    }
+    for(int i=0; i< waves.size(); ++i){
+        waves[i].draw(rend);
+    }
+    for(int i=0; i< wallWaves.size(); ++i){
+        wallWaves[i].draw(rend, width, height);
+    }
+
     // epoch for measuring uptime.  Moving from C++11 to C++20 because of this line:
     const static auto epoch = std::chrono::floor<std::chrono::days>(high_resolution_clock::now());
-//    std::cout <<  "asyncEn epoch: " << epoch.time_since_epoch() << std::endl;
-    int64_t us = (time - epoch).count() / 1000;
+    //    std::cout <<  "asyncEn epoch: " << epoch.time_since_epoch() << std::endl;
+    int64_t timeUs = (time - epoch).count() / 1000;
 
+    // if we run simulation at several re-computes per frame
+    // we can hit sensors on "lives" with different timestamps as wave propagetes through it
+    // this is essential to our simulation
+    constexpr int moves_per_frame = 10;
+    constexpr int usps = 1000000; // microseconds per second
+    constexpr int64_t moveTimeUs = (usps / fps) / moves_per_frame;
+
+    for(int i=0; i < moves_per_frame; ++i){
+        move(width, height, timeUs);
+        timeUs += moveTimeUs;
+    }
+}
+
+
+void Game::move(int width, int height, int64_t timeUs){
     // check collisions with walls and push circles away from the walls
-    Event e = {us, EventType::collision, 0.0};
+    Event e = {timeUs, EventType::collision, 0.0};
     for(Life& life: lives){
         if(life.circle.center.x <= 0){
             life.circle.center.x = life.circle.radius;
@@ -180,7 +207,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
         }
     }
 
-    // draw and move lives or delete them if health < 0
+    // move lives or delete them if health < 0
     e.event = EventType::death;
     for(int i=0; i < lives.size(); ++i){
         if(lives[i].getHealth() <= 0){
@@ -189,11 +216,10 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
             --i;
             continue;
         }
-        lives[i].move(time);
-        lives[i].draw(rend);
+        lives[i].move(timeUs);
     }
 
-    // draw and move waves or delete them if health < 0
+    // move waves or delete them if health < 0
     for(int i=0; i< waves.size(); ++i){
         if(waves[i].getHealth() <= 0){ // remove waves that have dissipated
             waves.erase(waves.begin() + i);
@@ -201,7 +227,6 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
             continue;
         }
         waves[i].move();
-        waves[i].draw(rend);
     }
 
     // draw and move waves from the walls or delete them if health < 0
@@ -212,12 +237,11 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
             continue;
         }
         wallWaves[i].move();
-        wallWaves[i].draw(rend, width, height);
     }
 
     // check collisions between lives and waves
+//    e.time = timeUs;
     e.event = EventType::wave;
-    e.time = us;
     for (Life& life: lives) {
         for (const Wave& wave: waves) {
             if( life.circle.checkCollision(wave.circle) && !wave.circle.inside(life.circle) ){ // once wave passes Life, stop sending events

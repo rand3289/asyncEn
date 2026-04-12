@@ -12,6 +12,7 @@ class Game {
 public:
     static Game& getInstance();
     void event(SDL_Event& e);
-    void draw(SDL_Renderer* rend, int width, int height);
     void addWave(const RGB& color, const Point2D& p);
+    void draw(SDL_Renderer* rend, int width, int height);
+    void move(int width, int height, int64_t timeUs);
 };

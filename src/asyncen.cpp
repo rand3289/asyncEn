@@ -1,5 +1,5 @@
 // asyncEn is an asynchronous environment based on SDL
-#include "asyncen.h" // class Args
+#include "asyncen.h"  // class Args
 #include "game.h"
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 #include <iostream>
@@ -31,8 +31,12 @@ int main(int argc, char* argv[]){
     if(0==window){ exitSDLerr(); }
     SDL_Renderer * renderer = SDL_CreateRenderer(window, -1, 0);
     if(0==renderer){ exitSDLerr(); }
+
     int width, height;
     SDL_GetWindowSize(window, &width, &height); // toggleFS(window, &width, &height);
+
+    SDL_EnableScreenSaver(); // disabled by default
+    setenv("SDL_VIDEO_ALLOW_SCREENSAVER","1",1);
 
     Game& game = Game::getInstance();
     SDL_Event e;
