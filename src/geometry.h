@@ -5,7 +5,7 @@
 #define RADIAN (180.0/M_PI) // degrees in one radian
 
 
-struct RGB{
+struct RGB {
     double r,g,b;
     RGB(): r(rand()%201 + 55), g(rand()%201 + 55), b(rand()%201 + 55) { }
     RGB(double R, double G, double B): r(R), g(G), b(B) {}

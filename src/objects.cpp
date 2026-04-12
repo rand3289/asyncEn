@@ -54,7 +54,7 @@ void Life::move(int64_t timeUs){
 
         if( timeUs > nextWaveTimeUs ){
             static Game& game = Game::getInstance();
-            game.addWave(color, circle.center); // every movement kicks up a wave
+            game.addWave(color, circle.center);    // every movement kicks up a wave
             constexpr int64_t halfSecond = 500000; // in microseconds
             nextWaveTimeUs = timeUs+halfSecond;
         }
