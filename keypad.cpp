@@ -7,7 +7,6 @@
 #include <string>
 #include <thread> // sleep_for()
 #include <chrono>
-using namespace std::chrono;
 
 
 void exitSDLerr(){
@@ -49,7 +48,7 @@ int main(int argc, char* argv[]){
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(renderer);
         SDL_RenderPresent(renderer);
-        std::this_thread::sleep_for(milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
     SDL_DestroyRenderer(renderer);

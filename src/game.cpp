@@ -8,7 +8,6 @@
 #include <algorithm>  // sort()
 #include <chrono>
 #include <cmath>      // for M_PI, cos, sin, exp
-using namespace std::chrono;
 
 
 double normalizeAngle(double angle){
@@ -19,50 +18,6 @@ double normalizeAngle(double angle){
         angle -= 360.0;
     }
     return angle;
-}
-
-// extrapolate how a straight wave (line) travels through a circle of radius 'radius'
-// from left to right on the interval of time from (time - frameTime) till time 'time'
-//
-// 'angle' is the angle at which the wave approaches/enters the circle
-// 'distance' is the distance from the center of the circle to the line of the wave
-// AI TODO: Life is represented by a circle with a radius 'life.circle.radius'.
-// Imagine 'SENSOR_COUNT' number of sensors at equal distance apart around the circumference.
-// Implement this function to call life.event(evt) when a wave moving from left to right with 'waveSpeed' hits one of the sensors.
-// Take into account Event::rgb which at time point 'time' is equal to rgb parameter but it decays at wave's fadeSpeed.
-void extrapolateWaveTravel(Life& life, double angle, double distance, int64_t time, int64_t frameTime, const RGB& rgb) {
-    const int SENSOR_COUNT = 8; // 3+
-    const double waveSpeed = 2.0;
-    const double fadeSpeed = 2.0;
-
-    for (int i = 0; i < SENSOR_COUNT; i++) {
-        double sensorAngle = (2.0 * M_PI * i) / SENSOR_COUNT;
-        double sensorX = life.circle.center.x + life.circle.radius * cos(sensorAngle);
-        double sensorY = life.circle.center.y + life.circle.radius * sin(sensorAngle);
-        
-        double waveToSensorDistance = distance + (sensorX * cos(angle) + sensorY * sin(angle));
-        double timeToHit = waveToSensorDistance / waveSpeed;
-        
-        if (timeToHit >= 0 && timeToHit <= frameTime) {
-            double fadeAmount = exp(-fadeSpeed * timeToHit);
-            RGB fadedRgb = { rgb.r * fadeAmount, rgb.g * fadeAmount, rgb.b * fadeAmount };
-            
-            Event evt = { .time = time, .event = EventType::wave, .srcAngle = normalizeAngle(angle), .triggeredSensorNumber = i, .rgb = fadedRgb };
-            life.event(evt);
-        }
-    }
-}
-
-void extrapolateWaveTravel(Life& life, const Wave& wave, int64_t time, int64_t frameTime){
-    double angle = life.circle.center.angle(wave.circle.center) + life.getAngle();
-    double distance = life.circle.center.distance(wave.circle.center) - wave.circle.radius;
-    extrapolateWaveTravel(life, angle, distance, time, frameTime, wave.getRGB());
-}
-
-void extrapolateWaveTravel(Life& life, const WallWave& wave, int64_t time, int64_t frameTime){
-    double angle = wave.getCollisionAngle(life.getAngle());
-    double distance = wave.getDistance(life.circle.center);
-    extrapolateWaveTravel(life, angle, distance, time, frameTime, wave.getRGB());
 }
 
 
@@ -89,11 +44,7 @@ void Game::addWave(const RGB& color, const Point2D& p){
 
 
 // reduce the number of waves in the system to level framerate
-void Game::cleanupWaves(std::chrono::high_resolution_clock::time_point& time){
-    // prevent cleanup two frames in a row
-    // static auto lastTime = std::chrono::high_resolution_clock::now();
-    // if(time-lastTime < std::chrono::milliseconds(128)){ return; }
-
+void Game::cleanupWaves(){
     std::sort(wallWaves.begin(), wallWaves.end()); // by type and location
 
     for(auto it = wallWaves.begin(); it != wallWaves.end() && (it+1) != wallWaves.end(); ++it){
@@ -123,17 +74,27 @@ void Game::event(SDL_Event& e){
 }
 
 
+int64_t timeNowUs(){
+    const static auto epoch = std::chrono::floor<std::chrono::days>(std::chrono::high_resolution_clock::now());
+    auto now = std::chrono::high_resolution_clock::now();
+    return (now - epoch).count() / 1000; // microseconds from the beginning of the day
+}
+
+
 void Game::draw(SDL_Renderer* rend, int width, int height){
-    constexpr int fps = 30; // frames per second
-    constexpr int nsps = 1000000000; // nanoseconds per second
-    const static auto frameTime = std::chrono::nanoseconds(nsps/fps);
-    static auto nextTime = std::chrono::high_resolution_clock::now();
-    auto time = std::chrono::high_resolution_clock::now();
+    constexpr int64_t usps = 1000000;       // microseconds per second
+    constexpr int64_t fps = 30;             // frames per second
+    constexpr int64_t frameTime = usps/fps; // one video frame in microseconds
+    constexpr int64_t movesPerFrame = 10;   // state updates per video frame
+    constexpr int64_t moveTime = (usps / fps) / movesPerFrame;
+
+    static int64_t nextTime = timeNowUs(); // initialized once
+    int64_t time = timeNowUs();
 
     if(time < nextTime){ // make sure framerate (FPS) is steady
-        std::this_thread::sleep_for(nextTime-time);
-    } else {
-        cleanupWaves(time);
+        std::this_thread::sleep_for(std::chrono::microseconds(nextTime-time));
+    } else { // Running takes too long.  Reduce the number of waves.
+        cleanupWaves();
     }
     nextTime += frameTime;
 
@@ -147,21 +108,13 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
         wallWaves[i].draw(rend, width, height);
     }
 
-    // epoch for measuring uptime.  Moving from C++11 to C++20 because of this line:
-    const static auto epoch = std::chrono::floor<std::chrono::days>(high_resolution_clock::now());
-    //    std::cout <<  "asyncEn epoch: " << epoch.time_since_epoch() << std::endl;
-    int64_t timeUs = (time - epoch).count() / 1000;
-
-    // if we run simulation at several re-computes per frame
-    // we can hit sensors on "lives" with different timestamps as wave propagetes through it
-    // this is essential to our simulation
-    constexpr int moves_per_frame = 10;
-    constexpr int usps = 1000000; // microseconds per second
-    constexpr int64_t moveTimeUs = (usps / fps) / moves_per_frame;
-
-    for(int i=0; i < moves_per_frame; ++i){
-        move(width, height, timeUs);
-        timeUs += moveTimeUs;
+    // We do not draw every update.  This allows for more granular updates.
+    // If we run simulation at several re-computes per frame,
+    // we can hit sensors on "lives" with different timestamps as wave propagetes through it.
+    // This is essential to our simulation!
+    for(int i=0; i < movesPerFrame; ++i){
+        move(width, height, time);
+        time += moveTime;
     }
 }
 
@@ -229,7 +182,7 @@ void Game::move(int width, int height, int64_t timeUs){
         waves[i].move();
     }
 
-    // draw and move waves from the walls or delete them if health < 0
+    // move waves from the walls or delete them if health < 0
     for(int i=0; i< wallWaves.size(); ++i){
         if(wallWaves[i].getHealth() <= 0){ // remove waves that have dissipated
             wallWaves.erase(wallWaves.begin() + i);
@@ -240,14 +193,12 @@ void Game::move(int width, int height, int64_t timeUs){
     }
 
     // check collisions between lives and waves
-//    e.time = timeUs;
     e.event = EventType::wave;
     for (Life& life: lives) {
         for (const Wave& wave: waves) {
             if( life.circle.checkCollision(wave.circle) && !wave.circle.inside(life.circle) ){ // once wave passes Life, stop sending events
                 e.srcAngle = life.circle.center.angle(wave.circle.center);
                 life.event(e);
-//                extrapolateWaveTravel(life, wave, us, frameTime.count()/1000); // wave movement through a Life (send multiple events) see wave.html
             }
         }
     }
@@ -258,7 +209,6 @@ void Game::move(int width, int height, int64_t timeUs){
             if(wave.checkCollision(life.circle)){
                 e.srcAngle = wave.getCollisionAngle(life.getAngle());
                 life.event(e);
-//                extrapolateWaveTravel(life, wave, us, frameTime.count()/1000); // wave movement through a Life (send multiple events) see wave.html
             }
         }
     }

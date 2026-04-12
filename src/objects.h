@@ -2,13 +2,10 @@
 #include "geometry.h"
 #include <SDL2/SDL.h>
 #include <unistd.h> // close()
-#include <chrono>
 
 #define WAVE_SPEED (0.1) // this is related to "moves_per_frame" in game.cpp
-typedef std::chrono::high_resolution_clock::time_point Time;
 
-
-enum WallWaveType{vertical_right, vertical_left, horisontal_up, horisontal_down};
+enum WallWaveType {vertical_right, vertical_left, horisontal_up, horisontal_down};
 
 class WallWave {
     const double waveSpeed = WAVE_SPEED;
