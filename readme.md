@@ -9,8 +9,11 @@ Actions are left/right/forward kicks to propell the objects.  Events include col
 
 Circular waves are generated when objects move.  Straight lines propagate out from walls when they get hit. In this case top wall got hit by two entities and straight lines are moving down.  Waves dissipate and faint as they move away from the source.  This should allow agents to determine distances to object that generated the waves.  
 
+# Simulation Goals
+The first goal of the simulator is to train agents to avoid collisions in the environment.  Agents will have to learn continuously because at some point (surprise! surprise!) agents will change the speed at which they are traveling (not the velocity).  This will test algorithms for continual learning and an ability to learn from non-stationary processes.  
+
 # Techical details
-Simulation is written in C++.  
+Simulation is written in C++ by hand (no AI has touched this code as of Apr 2026).  
 The only library dependency is SDL2.  It has to be installed.  
 Agents are stand alone stdio-style executables.  See [easya.cpp](easya.cpp) for a complete sample random agent implementation.  
 Run ```make; asyncen easya keypad``` to see how things run.  You can click on keypad window and use UP/LEFT/RIGHT arrows to move one agent around.  
