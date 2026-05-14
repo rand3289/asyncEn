@@ -10,7 +10,7 @@ Actions are left/right/forward kicks to propell the objects.  Events include col
 Circular waves are generated when objects move.  Straight lines propagate out from walls when they get hit. In this case top wall got hit by two entities and straight lines are moving down.  Waves dissipate and faint as they move away from the source.  This should allow agents to determine distances to object that generated the waves.  
 
 # Simulation Goals
-The first goal of the simulator is to train agents to avoid collisions in the environment.  Agents will have to learn continuously because at some point (surprise! surprise!) agents will change the speed at which they are traveling (not the velocity).  This will test algorithms for continual learning and an ability to learn from non-stationary processes. Agents will receive collision and wave events.  
+The first goal of the simulator is to train agents to avoid collisions in the environment.  Agents will have to learn continuously because at some point (surprise! surprise!) agents will change the speed at which they are traveling.  This will test algorithms for continual learning and an ability to learn from non-stationary processes.  
 
 # Techical details
 Simulation is written in C++ by hand (no AI has touched this code as of Apr 2026).  
@@ -21,6 +21,4 @@ Run ```make; asyncen easya keypad``` to see how things run.  You can click on ke
 # Other simulators
 I've thought about using [Box2D](https://box2d.org) to simulate physics since it also generates events.  However it seems that shapes are immutable.  You cannot modify their properties like radius after creation.  Deleting and creating wave objects to check collisions on every frame might be too expensive or even impossible.  
 
-<details>
-Last updated 10/2025
-</details>
+Last updated 05/2026
