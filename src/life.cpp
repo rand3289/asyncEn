@@ -1,4 +1,4 @@
-#include "objects.h"
+#include "life.h"
 #include "game.h"   // Game::getInstance()
 #include <unistd.h> // read()
 #include <iostream> // for debugging

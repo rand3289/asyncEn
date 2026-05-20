@@ -1,5 +1,5 @@
 #pragma once
-#include "objects.h"
+#include "life.h"
 #include "waves.h"
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 #include <vector>
