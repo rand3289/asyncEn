@@ -42,4 +42,9 @@ public:
     double getAngle() const { return angle; }
     // TODO: accept event parameters instead of a constructed event here?
     void event(const Event& e);    // collision, wave, etc...
+
+    bool inside(const Circle& circle) const; // for Wave
+    bool checkCollision(const Circle& circle) const; // for Wave
+    bool checkCollision(const WallWave& wallWave) const;
+    bool checkCollision(const Life& life) const;
 };
