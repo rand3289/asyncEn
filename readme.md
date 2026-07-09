@@ -1,9 +1,9 @@
 # asyncEn
 asyncEn is a minimalistic environment for testing AI algorithms that consume events such as spiking neural networks.  
-The simulation takes place on a surface and generates waves during collisions and kicks.  
+The simulation takes place on a surface and generates waves during collisions and movements.  
 This is the simplest environment I could write.  Everything is a circle or a horisontal/vertical line to simplify collision detection.  
 Agents driving objects' behavior send momentary actions and receive events from the environment.  
-Actions are left/right/forward kicks to propell the objects.  Events include collisions and wave interactions.  
+Agent actions are turn left/turn right/kick forward.  Events include collisions and wave interactions.  
 
 ![asyncEn screenshot](screenshot.png)  
 
@@ -21,4 +21,4 @@ Run ```make; asyncen easya keypad``` to see how things run.  You can click on ke
 # Other simulators
 I've thought about using [Box2D](https://box2d.org) to simulate physics since it also generates events.  However it seems that shapes are immutable.  You cannot modify their properties like radius after creation.  Deleting and creating wave objects to check collisions on every frame might be too expensive or even impossible.  
 
-Last updated 05/2026
+Last updated 06/2026
