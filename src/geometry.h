@@ -65,6 +65,7 @@ struct Circle {
     Circle(double x, double y, double rad): center(x,y), radius(rad) {}
     Circle(const Circle& other): center(other.center), radius(other.radius) {}
     Circle(Circle&& other) noexcept: center(std::move(other.center)), radius(other.radius) {}
+    static double square(double x) { return x*x; }
 
     Circle& operator=(const Circle& other) {
         center = other.center;
@@ -82,7 +83,8 @@ struct Circle {
     }
 
     bool checkCollision(const Circle& b) const {
-        return distance(b) <= 0;
+        return square(center.x-b.center.x) + square(center.y-b.center.y) <= square(radius+b.radius);
+//        return distance(b) <= 0;
     }
 
     bool inside(const Circle& b) const {
