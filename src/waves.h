@@ -44,7 +44,9 @@ public:
     const RGB& getRGB() const { return rgb; }
 
     bool checkCollision(const Circle& circle) const;
-    double getCollisionAngle(double angle) const;
+
+    double getLoc() const { return loc; }
+    WallWaveType getType() const { return type; }
 
     bool less(const WallWave& b) const { return type==b.type ? loc < b.loc : type < b.type; }
     bool operator<(const WallWave& b) const { return less(b); }

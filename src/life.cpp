@@ -1,6 +1,7 @@
 #include "life.h"
 #include "game.h"   // Game::getInstance()
 #include <unistd.h> // read()
+#include <cmath>    // std::fabs()
 #include <iostream> // for debugging
 
 
@@ -15,10 +16,10 @@ void Life::event(const Event& e){
     char buff[32];
     switch(e.event){
         case EventType::wave:
-            size = sprintf(buff, "1,%lld,%d\n", e.time, (int) e.srcAngle);
+            size = sprintf(buff, "1,%lld,%d\n", e.time, e.triggeredSensorNumber);
             break;
         case EventType::collision:
-            size = sprintf(buff, "2,%lld,%d\n", e.time, (int) e.srcAngle);
+            size = sprintf(buff, "2,%lld,%d\n", e.time, e.triggeredSensorNumber);
             break;
         case EventType::death:
             size = sprintf(buff, "3,%lld,0\n", e.time);
@@ -79,3 +80,60 @@ bool Life::inside(const Circle& c) const { return c.inside(circle); }
 bool Life::checkCollision(const Circle& c)const { return c.checkCollision(circle); }
 bool Life::checkCollision(const WallWave& wallWave) const { return wallWave.checkCollision(circle); }
 bool Life::checkCollision(const Life& life) const { return life.checkCollision(circle); }
+
+
+// World-space position of perimeter sensor k, equally spaced around the circle.
+Point2D Life::sensorPoint(int k) const {
+    const double a = (360.0 * k) / SENSOR_COUNT; // degrees
+    // place a radius-length vector pointing right, then rotate it to the sensor angle
+    return circle.center.translate( Point2D(circle.radius, 0).rotate(a) );
+}
+
+// Pick the sensor whose outward direction most closely faces 'target'.
+int Life::nearestSensor(const Point2D& target) const {
+    int best = 0;
+    double bestDist = sensorPoint(0).distance(target);
+    for(int k = 1; k < SENSOR_COUNT; ++k){
+        const double d = sensorPoint(k).distance(target);
+        if(d < bestDist){
+            bestDist = d;
+            best = k;
+        }
+    }
+    return best;
+}
+
+// A circular wave front is an expanding ring of radius waveFront.radius centred
+// at waveFront.center.  A sensor is "swept" by the ring on the sub-step when the
+// ring's radius matches the sensor's distance from the wave centre (within half a
+// step so each sensor fires once).  Sensors closer to the source match on earlier
+// sub-steps, so the wave visibly propagates across the body over time.
+void Life::senseWave(const Circle& waveFront, int64_t timeUs){
+    constexpr double halfStep = WAVE_SPEED / 2.0;
+    Event e = { timeUs, EventType::wave, -1 };
+    for(int k = 0; k < SENSOR_COUNT; ++k){
+        const double d = sensorPoint(k).distance(waveFront.center);
+        if( std::fabs(d - waveFront.radius) <= halfStep ){
+            e.triggeredSensorNumber = k;
+            event(e);
+        }
+    }
+}
+
+// A wall wave is a straight line at coordinate loc moving along one axis.  A
+// sensor is swept when the line's coordinate passes the sensor's coordinate.
+void Life::senseWave(const WallWave& wallWave, int64_t timeUs){
+    constexpr double halfStep = WAVE_SPEED / 2.0;
+    const double loc = wallWave.getLoc();
+    const WallWaveType type = wallWave.getType();
+    const bool horizontal = (type == WallWaveType::horisontal_up || type == WallWaveType::horisontal_down);
+    Event e = { timeUs, EventType::wave, -1 };
+    for(int k = 0; k < SENSOR_COUNT; ++k){
+        const Point2D p = sensorPoint(k);
+        const double coord = horizontal ? p.y : p.x;
+        if( std::fabs(coord - loc) <= halfStep ){
+            e.triggeredSensorNumber = k;
+            event(e);
+        }
+    }
+}

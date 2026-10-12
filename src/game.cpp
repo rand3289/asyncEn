@@ -110,26 +110,27 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
 
 void Game::move(int width, int height, int64_t timeUs){
     // check collisions with walls and push circles away from the walls
-    Event e = {timeUs, EventType::collision, 0.0};
+    Event e = {timeUs, EventType::collision, -1};
     for(Life& life: lives){
+        Point2D contact = life.circle.center; // point on the wall the life hit
         if(life.circle.center.x <= 0){
             life.circle.center.x = life.circle.radius;
-            e.srcAngle = 180-life.getAngle();
+            contact.x = 0;
             wallWaves.emplace_back(0, WallWaveType::vertical_right);
         } else if (life.circle.center.x >= width){
             life.circle.center.x = width-life.circle.radius;
-            e.srcAngle = -life.getAngle();
+            contact.x = width;
             wallWaves.emplace_back(width, WallWaveType::vertical_left);
         } else if (life.circle.center.y <= 0){
             life.circle.center.y = life.circle.radius;
-            e.srcAngle = 90-life.getAngle();
+            contact.y = 0;
             wallWaves.emplace_back(0, WallWaveType::horisontal_down);
         } else if(life.circle.center.y >= height){
             life.circle.center.y = height-life.circle.radius;
-            e.srcAngle = -90-life.getAngle();
+            contact.y = height;
             wallWaves.emplace_back(height, WallWaveType::horisontal_up);
         } else { continue; }
-        e.srcAngle = normalizeAngle(e.srcAngle);
+        e.triggeredSensorNumber = life.nearestSensor(contact);
         life.event(e);
     }
 
@@ -137,11 +138,10 @@ void Game::move(int width, int height, int64_t timeUs){
     for (size_t i = 0; i < lives.size(); ++i) {
         for (size_t j = i + 1; j < lives.size(); ++j) {
             if ( lives[i].checkCollision(lives[j]) ) {
-                e.srcAngle = lives[i].circle.center.angle(lives[j].circle.center);
-                e.srcAngle = normalizeAngle(e.srcAngle);
+                // each life registers the hit on the sensor facing the other life
+                e.triggeredSensorNumber = lives[i].nearestSensor(lives[j].circle.center);
                 lives[i].event(e);
-                e.srcAngle += 180;
-                e.srcAngle = normalizeAngle(e.srcAngle);
+                e.triggeredSensorNumber = lives[j].nearestSensor(lives[i].circle.center);
                 lives[j].event(e);
                 lives[i].circle.pushApart(lives[j].circle); // push collided lives apart
                 // TODO: shouldn't collisions cause waves ???
@@ -181,13 +181,12 @@ void Game::move(int width, int height, int64_t timeUs){
         wallWaves[i].move();
     }
 
-    // check collisions between lives and waves
-    e.event = EventType::wave;
+    // check collisions between lives and waves (per sensor, so the wave front
+    // sweeps across each life hitting near sensors before far ones)
     for (Life& life: lives) {
         for (const Wave& wave: waves) {
             if( life.checkCollision(wave.circle) && ! life.inside(wave.circle) ){ // once wave passes Life, stop sending events
-                e.srcAngle = life.circle.center.angle(wave.circle.center);
-                life.event(e);
+                life.senseWave(wave.circle, timeUs);
             }
         }
     }
@@ -196,8 +195,7 @@ void Game::move(int width, int height, int64_t timeUs){
     for (Life& life: lives) {
         for (const WallWave& wave: wallWaves) {
             if(life.checkCollision(wave)){
-                e.srcAngle = wave.getCollisionAngle(life.getAngle());
-                life.event(e);
+                life.senseWave(wave, timeUs);
             }
         }
     }

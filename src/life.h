@@ -8,11 +8,15 @@ enum ActionType{ none=0, kickLeft, kickRight, kickBoth };
 
 enum EventType{ noop=0, collision, wave, death};
 
+// Number of sensors arranged equally spaced around the perimeter of each Life.
+// A larger number gives finer spatial (and, together with the sub-frame time
+// steps in Game::draw(), finer temporal) resolution of incoming waves.
+constexpr int SENSOR_COUNT = 16;
+
 struct Event {
     int64_t time; // microseconds
     EventType event;
-    double srcAngle;
-    int triggeredSensorNumber;
+    int triggeredSensorNumber; // which perimeter sensor was hit (-1 for events with no sensor, e.g. death)
     RGB rgb;
 };
 
@@ -47,4 +51,14 @@ public:
     bool checkCollision(const Circle& circle) const; // for Wave
     bool checkCollision(const WallWave& wallWave) const;
     bool checkCollision(const Life& life) const;
+
+    // World-space position of perimeter sensor k (0 <= k < SENSOR_COUNT).
+    Point2D sensorPoint(int k) const;
+    // Index of the sensor whose outward direction best faces 'target'.
+    int nearestSensor(const Point2D& target) const;
+    // Fire an event for every sensor the wave front is currently sweeping across.
+    // Near sensors are reached on earlier sub-steps than far ones, so successive
+    // calls (as the wave grows) deliver events to different sensors over time.
+    void senseWave(const Circle& waveFront, int64_t timeUs);
+    void senseWave(const WallWave& wallWave, int64_t timeUs);
 };

@@ -82,18 +82,3 @@ bool WallWave::checkCollision(const Circle& circle) const {
     }
     return false;
 }
-
-// this is the collision angle from the point of view of Life
-double WallWave::getCollisionAngle(double angle) const {
-    switch(type){
-        case WallWaveType::horisontal_down:
-            return 90 - angle;
-        case WallWaveType::horisontal_up:
-            return 90 + angle;
-        case WallWaveType::vertical_left:
-            return -angle;
-        case WallWaveType::vertical_right:
-            return angle;
-    }
-    return 0.0;
-}
