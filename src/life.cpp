@@ -33,7 +33,7 @@ void Life::move(int64_t timeUs){
     static const Point2D unitVector(speed, 0);
 
     char buff[128];
-    size_t rd = read(outFd, buff, sizeof(buff)-1);
+    ssize_t rd = read(outFd, buff, sizeof(buff)-1); // ssize_t: read() returns -1 on EAGAIN/error
     if( rd > 0 ){
         buff[rd] = 0;
         int time, action, param;

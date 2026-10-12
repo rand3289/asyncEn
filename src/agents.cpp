@@ -11,6 +11,11 @@ static void setNonBlock(int fd) { // Set non-blocking mode
     fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
 
+static void setCloExec(int fd) { // close this fd automatically on exec()
+    int flags = fcntl(fd, F_GETFD, 0);
+    fcntl(fd, F_SETFD, flags | FD_CLOEXEC);
+}
+
 
 static void spawnAgents(const std::vector<std::string>& argv, std::vector<int>& inputFds, std::vector<int>& outputFds) {
     inputFds.resize(argv.size());
@@ -31,10 +36,20 @@ static void spawnAgents(const std::vector<std::string>& argv, std::vector<int>& 
 
         pid_t pid = fork();
         if (pid == 0) { // child process
+            // Close every parent-side pipe end inherited from previously spawned
+            // agents.  Otherwise this child keeps a writable handle to another
+            // agent's pipe and the parent can read one agent's output as if it
+            // came from a different Life, making several circles move at once.
+            for (int j = 0; j < i; ++j) {
+                close(inputFds[j]);
+                close(outputFds[j]);
+            }
             close( readPipe[1]);
             close(writePipe[0]);
             dup2( readPipe[0],  STDIN_FILENO);
             dup2(writePipe[1], STDOUT_FILENO);
+            close( readPipe[0]); // originals no longer needed after dup2
+            close(writePipe[1]);
 
             // execl() returns -1 when fails
             // TODO: how do you signal failure here?  Another output array?
@@ -47,6 +62,8 @@ static void spawnAgents(const std::vector<std::string>& argv, std::vector<int>& 
             close(writePipe[1]);
             setNonBlock( readPipe[1]); // do not wait on slow agents
             setNonBlock(writePipe[0]);
+            setCloExec( readPipe[1]); // never leak parent-side ends into agents
+            setCloExec(writePipe[0]);
             inputFds[i]  =  readPipe[1];
             outputFds[i] = writePipe[0];
         }
