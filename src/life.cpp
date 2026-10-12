@@ -104,34 +104,45 @@ int Life::nearestSensor(const Point2D& target) const {
 }
 
 // A circular wave front is an expanding ring of radius waveFront.radius centred
-// at waveFront.center.  A sensor is "swept" by the ring on the sub-step when the
-// ring's radius matches the sensor's distance from the wave centre (within half a
-// step so each sensor fires once).  Sensors closer to the source match on earlier
-// sub-steps, so the wave visibly propagates across the body over time.
+// at waveFront.center.  The ring grows by WAVE_SPEED each sub-step, so a sensor
+// is swept on the sub-step when the front crosses that sensor's distance from the
+// wave centre: the front is at (or past) the sensor now but was before it last
+// step.  A crossing test (rather than a proximity window) guarantees each sensor
+// fires exactly once even though the radius advances on a discrete grid.  Sensors
+// closer to the source are crossed on earlier sub-steps, so the wave visibly
+// propagates across the body over time.
 void Life::senseWave(const Circle& waveFront, int64_t timeUs){
-    constexpr double halfStep = WAVE_SPEED / 2.0;
+    const double radius = waveFront.radius;
+    const double prevRadius = radius - WAVE_SPEED; // front position one sub-step ago
     Event e = { timeUs, EventType::wave, -1 };
     for(int k = 0; k < SENSOR_COUNT; ++k){
         const double d = sensorPoint(k).distance(waveFront.center);
-        if( std::fabs(d - waveFront.radius) <= halfStep ){
+        if( prevRadius < d && d <= radius ){ // front crossed this sensor this step
             e.triggeredSensorNumber = k;
             event(e);
         }
     }
 }
 
-// A wall wave is a straight line at coordinate loc moving along one axis.  A
-// sensor is swept when the line's coordinate passes the sensor's coordinate.
+// A wall wave is a straight line at coordinate loc moving along one axis by
+// WAVE_SPEED each sub-step.  A sensor is swept when the line crosses the sensor's
+// coordinate this step: the line is at (or past) it now but was on the other side
+// last step.  As with circular waves this crossing test fires each sensor exactly
+// once as the front passes through the body.
 void Life::senseWave(const WallWave& wallWave, int64_t timeUs){
-    constexpr double halfStep = WAVE_SPEED / 2.0;
     const double loc = wallWave.getLoc();
     const WallWaveType type = wallWave.getType();
     const bool horizontal = (type == WallWaveType::horisontal_up || type == WallWaveType::horisontal_down);
+    // horisontal_down and vertical_right increase loc; the others decrease it.
+    const bool increasing = (type == WallWaveType::horisontal_down || type == WallWaveType::vertical_right);
+    const double prevLoc = increasing ? loc - WAVE_SPEED : loc + WAVE_SPEED;
     Event e = { timeUs, EventType::wave, -1 };
     for(int k = 0; k < SENSOR_COUNT; ++k){
         const Point2D p = sensorPoint(k);
         const double coord = horizontal ? p.y : p.x;
-        if( std::fabs(coord - loc) <= halfStep ){
+        const bool crossed = increasing ? (prevLoc < coord && coord <= loc)
+                                         : (loc <= coord && coord < prevLoc);
+        if( crossed ){
             e.triggeredSensorNumber = k;
             event(e);
         }

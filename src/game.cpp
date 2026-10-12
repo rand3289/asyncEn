@@ -28,7 +28,10 @@ Game& Game::getInstance() {
 
 
 void Game::addWave(const RGB& color, const Point2D& p){
-    waves.emplace_back(color, p.x, p.y, 1); 
+    // Spawn the wave front just outside the generating life's own perimeter
+    // (life radius is 5) so a life does not sense the waves it produces itself.
+    constexpr double initialRadius = 6;
+    waves.emplace_back(color, p.x, p.y, initialRadius);
 }
 
 
@@ -182,10 +185,16 @@ void Game::move(int width, int height, int64_t timeUs){
     }
 
     // check collisions between lives and waves (per sensor, so the wave front
-    // sweeps across each life hitting near sensors before far ones)
+    // sweeps across each life hitting near sensors before far ones).  The front
+    // overlaps the body while its radius is between the distance to the nearest
+    // point of the life and the distance to the farthest point; senseWave() then
+    // fires the individual sensors the front actually crosses this sub-step.
     for (Life& life: lives) {
         for (const Wave& wave: waves) {
-            if( life.checkCollision(wave.circle) && ! life.inside(wave.circle) ){ // once wave passes Life, stop sending events
+            const double centerDist = life.circle.center.distance(wave.circle.center);
+            const double near = centerDist - life.circle.radius; // front reaches body
+            const double far  = centerDist + life.circle.radius; // front clears body
+            if( wave.circle.radius >= near && wave.circle.radius <= far ){
                 life.senseWave(wave.circle, timeUs);
             }
         }
