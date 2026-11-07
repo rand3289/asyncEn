@@ -76,7 +76,6 @@ Life& Life::operator=(const Life& other) {
 }
 
 
-bool Life::inside(const Circle& c) const { return c.inside(circle); }
 bool Life::checkCollision(const Circle& c)const { return c.checkCollision(circle); }
 bool Life::checkCollision(const WallWave& wallWave) const { return wallWave.checkCollision(circle); }
 bool Life::checkCollision(const Life& life) const { return life.checkCollision(circle); }

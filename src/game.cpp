@@ -178,7 +178,7 @@ void Game::move(int width, int height, int64_t timeUs){
     // sweeps across each life hitting near sensors before far ones).
     for (Life& life: lives) {
         for (const Wave& wave: waves) {
-            if( wave.circle.checkCollision(life.circle) && !wave.circle.inside(life.circle) ){
+            if( wave.circle.checkCollision(life.circle) && !wave.circle.contains(life.circle) ){
                 life.senseWave(wave.circle, timeUs);
             }
         }

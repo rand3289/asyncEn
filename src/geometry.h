@@ -75,7 +75,7 @@ struct Circle {
     }
 
     // is circle b fully contained within *this* circle?
-    bool inside(const Circle& b) const {
+    bool contains(const Circle& b) const {
         return center.distance(b.center) + b.radius <= radius;
     }
 
