@@ -2,15 +2,15 @@
 #include <SDL2/SDL.h> // Simple Directmedia Layer lib has to be installed
 
 
-double normalizeAngle(double angle){
-    while(angle < 0.0){
-        angle += 360.0;
-    }
-    while(angle >= 360.0){
-        angle -= 360.0;
-    }
-    return angle;
-}
+// double normalizeAngle(double angle){
+//     while(angle < 0.0){
+//         angle += 360.0;
+//     }
+//     while(angle >= 360.0){
+//         angle -= 360.0;
+//     }
+//     return angle;
+// }
 
 
 void drawCircle(SDL_Renderer* renderer, int32_t centreX, int32_t centreY, int32_t radius){

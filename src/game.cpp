@@ -38,12 +38,10 @@ void Game::addWave(const RGB& color, const Point2D& p){
 // reduce the number of waves in the system to level framerate
 void Game::cleanupWaves(){
     std::sort(wallWaves.begin(), wallWaves.end()); // by type and location
-
-    for(auto it = wallWaves.begin(); it != wallWaves.end() && (it+1) != wallWaves.end(); ++it){
-        if( it->equal(*(it+1)) ){
-            wallWaves.erase(it+1); // TODO: this is slow
-        }
-    }
+    wallWaves.erase(
+        std::unique(wallWaves.begin(), wallWaves.end(),
+            [](const WallWave& a, const WallWave& b){ return a.equal(b); }),
+            wallWaves.end());
 
     const size_t ws = waves.size();
     for(int i=1; i < ws/2; i+=2){
