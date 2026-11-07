@@ -18,10 +18,10 @@ int main(int argc, char* argv[]) {
     while(true){                     //
         int event, time, param;
         ssize_t rd = scanf("%d,%d,%d\n", &event, &time, &param);
-        if(3==rd){ // print to console through stderr for debugging
+//        if(3==rd){ // print to console through stderr for debugging
 //            fprintf(stderr, "%d,%d,%d\t", event, time/1000, param);
 //            fflush(stderr);
-        }
+//        }
 
         // the format is time, action, parameter
         printf("0,%d,0\n", 1+(rand()%3) ); // randomly print action 1 or 2 or 3

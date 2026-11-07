@@ -3,6 +3,9 @@
 
 
 // double normalizeAngle(double angle){
+//// double a = ((int)angle) % 360;
+//// double part = angle - (int) angle;
+//// return a+part;
 //     while(angle < 0.0){
 //         angle += 360.0;
 //     }

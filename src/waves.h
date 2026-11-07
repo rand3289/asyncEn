@@ -17,7 +17,6 @@ public:
     void draw(SDL_Renderer* rend) const;
     void move();
     double getHealth() const { return rgb.r + rgb.g + rgb.b; }
-    const RGB& getRGB() const { return rgb; }
 };
 
 
@@ -35,7 +34,6 @@ public:
     void draw(SDL_Renderer* rend, int width, int height) const;
     void move();
     double getHealth() const { return rgb.r + rgb.g + rgb.b; }
-    const RGB& getRGB() const { return rgb; }
 
     bool checkCollision(const Circle& circle) const;
 
