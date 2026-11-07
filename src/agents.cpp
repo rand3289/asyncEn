@@ -18,8 +18,9 @@ static void setCloExec(int fd) { // close this fd automatically on exec()
 
 
 static void spawnAgents(const std::vector<std::string>& argv, std::vector<int>& inputFds, std::vector<int>& outputFds) {
-    inputFds.resize(argv.size());
-    outputFds.resize(argv.size());
+    // Start empty and append a pair of fds only after an agent is fully spawned.
+    inputFds.clear();
+    outputFds.clear();
 
     for (size_t i=0; i < argv.size(); ++i) {
         int readPipe[2], writePipe[2];
@@ -30,17 +31,25 @@ static void spawnAgents(const std::vector<std::string>& argv, std::vector<int>& 
         if (pipe(writePipe) == -1){
             close(readPipe[0]);
             close(readPipe[1]);
-            perror("pipe");
+            perror("pipe2");
             continue;
         }
 
         pid_t pid = fork();
+        if (pid == -1) { // fork failed: release both pipes so no fds leak
+            perror("fork");
+            close( readPipe[0]);
+            close( readPipe[1]);
+            close(writePipe[0]);
+            close(writePipe[1]);
+            continue;
+        }
         if (pid == 0) { // child process
             // Close every parent-side pipe end inherited from previously spawned
             // agents.  Otherwise this child keeps a writable handle to another
             // agent's pipe and the parent can read one agent's output as if it
             // came from a different Life, making several circles move at once.
-            for (size_t j = 0; j < i; ++j) {
+            for (size_t j = 0; j < inputFds.size(); ++j) {
                 close(inputFds[j]);
                 close(outputFds[j]);
             }
@@ -64,8 +73,8 @@ static void spawnAgents(const std::vector<std::string>& argv, std::vector<int>& 
             setNonBlock(writePipe[0]);
             setCloExec( readPipe[1]); // never leak parent-side ends into agents
             setCloExec(writePipe[0]);
-            inputFds[i]  =  readPipe[1];
-            outputFds[i] = writePipe[0];
+            inputFds.push_back( readPipe[1]);  // append only on success
+            outputFds.push_back(writePipe[0]);
         }
     } // for
 }
