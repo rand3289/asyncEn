@@ -2,7 +2,7 @@
 #include "geometry.h"
 #include <SDL2/SDL.h>
 
-#define WAVE_SPEED (0.1) // related to "movesPerFrame" in Game::draw() [game.cpp]
+#define WAVE_SPEED (0.5) // related to "movesPerFrame" in Game::draw() [game.cpp]
 
 class Wave {
     constexpr static double speed = WAVE_SPEED;

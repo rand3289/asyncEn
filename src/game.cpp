@@ -75,7 +75,7 @@ void Game::draw(SDL_Renderer* rend, int width, int height){
     constexpr int64_t usps = 1000000;       // microseconds per second
     constexpr int64_t fps = 30;             // frames per second
     constexpr int64_t frameTime = usps/fps; // one video frame in microseconds
-    constexpr int64_t movesPerFrame = 10;   // state updates per video frame
+    constexpr int64_t movesPerFrame = 10;   // state updates per video frame // TODO: how do we calculate this correctly???
     constexpr int64_t moveTime = (usps / fps) / movesPerFrame;
 
     static int64_t nextTime = timeNowUs(); // initialized once
@@ -170,8 +170,8 @@ void Game::move(int width, int height, int64_t timeUs){
 
     // remove dissipated wall waves, then advance the survivors
     std::erase_if(wallWaves, [](const WallWave& w){ return w.getHealth() <= 0; });
-    for(WallWave& wave: wallWaves){
-        wave.move();
+    for(WallWave& wallWave: wallWaves){
+        wallWave.move();
     }
 
     // check collisions between lives and waves (per sensor, so the wave front
