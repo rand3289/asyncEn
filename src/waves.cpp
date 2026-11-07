@@ -8,9 +8,7 @@ void Wave::draw(SDL_Renderer* rend) const {
 
 void Wave::move() {
     circle.radius += speed;
-    rgb.r = rgb.r>fadeSpeed ? rgb.r-fadeSpeed : 0.0;
-    rgb.g = rgb.g>fadeSpeed ? rgb.g-fadeSpeed : 0.0;
-    rgb.b = rgb.b>fadeSpeed ? rgb.b-fadeSpeed : 0.0;
+    rgb.fade(fadeSpeed);
 }
 
 
@@ -39,9 +37,7 @@ void WallWave::move(){
         case WallWaveType::vertical_left:   loc-=speed; break;
         case WallWaveType::vertical_right:  loc+=speed; break;
     }
-    rgb.r = rgb.r>fadeSpeed ? rgb.r-fadeSpeed : 0.0;
-    rgb.g = rgb.g>fadeSpeed ? rgb.g-fadeSpeed : 0.0;
-    rgb.b = rgb.b>fadeSpeed ? rgb.b-fadeSpeed : 0.0;
+    rgb.fade(fadeSpeed);
 }
 
 

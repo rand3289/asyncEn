@@ -9,6 +9,13 @@ struct RGB {
     double r,g,b;
     RGB(): r(rand()%201 + 55), g(rand()%201 + 55), b(rand()%201 + 55) { }
     RGB(double R, double G, double B): r(R), g(G), b(B) {}
+
+    // Fade towards black by 'amount' per channel, clamped at 0
+    void fade(double amount){
+        r = r>amount ? r-amount : 0.0;
+        g = g>amount ? g-amount : 0.0;
+        b = b>amount ? b-amount : 0.0;
+    }
 };
 
 
