@@ -175,16 +175,10 @@ void Game::move(int width, int height, int64_t timeUs){
     }
 
     // check collisions between lives and waves (per sensor, so the wave front
-    // sweeps across each life hitting near sensors before far ones).  The front
-    // overlaps the body while its radius is between the distance to the nearest
-    // point of the life and the distance to the farthest point; senseWave() then
-    // fires the individual sensors the front actually crosses this sub-step.
+    // sweeps across each life hitting near sensors before far ones).
     for (Life& life: lives) {
         for (const Wave& wave: waves) {
-            const double centerDist = life.circle.center.distance(wave.circle.center);
-            const double near = centerDist - life.circle.radius; // front reaches body
-            const double far  = centerDist + life.circle.radius; // front clears body
-            if( wave.circle.radius >= near && wave.circle.radius <= far ){
+            if( wave.circle.checkCollision(life.circle) && !wave.circle.inside(life.circle) ){
                 life.senseWave(wave.circle, timeUs);
             }
         }

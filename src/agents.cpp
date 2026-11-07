@@ -21,7 +21,7 @@ static void spawnAgents(const std::vector<std::string>& argv, std::vector<int>& 
     inputFds.resize(argv.size());
     outputFds.resize(argv.size());
 
-    for (int i=0; i < argv.size(); ++i) {
+    for (size_t i=0; i < argv.size(); ++i) {
         int readPipe[2], writePipe[2];
         if (pipe(readPipe) == -1) {
             perror("pipe");
@@ -40,7 +40,7 @@ static void spawnAgents(const std::vector<std::string>& argv, std::vector<int>& 
             // agents.  Otherwise this child keeps a writable handle to another
             // agent's pipe and the parent can read one agent's output as if it
             // came from a different Life, making several circles move at once.
-            for (int j = 0; j < i; ++j) {
+            for (size_t j = 0; j < i; ++j) {
                 close(inputFds[j]);
                 close(outputFds[j]);
             }

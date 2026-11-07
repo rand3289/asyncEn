@@ -74,14 +74,15 @@ struct Circle {
         return square(center.x-b.center.x) + square(center.y-b.center.y) <= square(radius+b.radius);
     }
 
+    // is circle b fully contained within *this* circle?
     bool inside(const Circle& b) const {
-        return distance(b) <= (radius - b.radius);
+        return center.distance(b.center) + b.radius <= radius;
     }
 
     // push two circles apart after a collision
     void pushApart(Circle& b) {
         double angle = center.angle(b.center);  // angle between two circle centers
-        double delta = abs(distance(b) / 1.99); // move each Circle just over half the distance away
+        double delta = std::abs(distance(b) / 1.99); // move each Circle just over half the distance away
         Point2D moveBy = Point2D(delta, 0).rotate(angle);
         center = center.translate(moveBy);
         moveBy = moveBy.rotate(180); // push the second circle the other way
