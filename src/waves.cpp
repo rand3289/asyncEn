@@ -1,14 +1,6 @@
 #include "waves.h"
 
 
-Wave& Wave::operator=(const Wave& other) {
-    if (this != &other) {
-        rgb = other.rgb;
-        circle = other.circle;
-    }
-    return *this;
-}
-
 void Wave::draw(SDL_Renderer* rend) const {
     SDL_SetRenderDrawColor(rend, rgb.r, rgb.g, rgb.b, SDL_ALPHA_OPAQUE);
     circle.draw(rend);
@@ -21,15 +13,6 @@ void Wave::move() {
     rgb.b = rgb.b>fadeSpeed ? rgb.b-fadeSpeed : 0.0;
 }
 
-
-WallWave& WallWave::operator=(const WallWave& other) {
-    if (this != &other) {
-        rgb = other.rgb;
-        loc = other.loc;
-        type = other.type;
-    }
-    return *this;
-}
 
 void WallWave::draw(SDL_Renderer* rend, int width, int height) const {
     Point2D p1, p2;

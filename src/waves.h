@@ -13,9 +13,6 @@ public:
 
     Wave(): rgb(0,0,0), circle(0,0,0) { };
     Wave(const RGB& rgbp, double x, double y, double radius): rgb(rgbp), circle(x,y,radius) {}
-    Wave(const Wave& other): rgb(other.rgb), circle(other.circle) {}
-    Wave(Wave&& other) noexcept: rgb(std::move(other.rgb)), circle(std::move(other.circle)) {}
-    Wave& operator=(const Wave& other);
 
     void draw(SDL_Renderer* rend) const;
     void move();
@@ -34,9 +31,6 @@ class WallWave {
     WallWaveType type;
 public:
     WallWave(double location, WallWaveType typE): rgb(255,255,255), loc(location), type(typE) {}
-    WallWave(const WallWave& other): rgb(other.rgb), loc(other.loc), type(other.type) {}
-    WallWave(WallWave&& other) noexcept: rgb(other.rgb), loc(other.loc), type(other.type) {}
-    WallWave& operator=(const WallWave& other);
 
     void draw(SDL_Renderer* rend, int width, int height) const;
     void move();

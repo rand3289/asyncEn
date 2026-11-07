@@ -9,9 +9,6 @@ struct RGB {
     double r,g,b;
     RGB(): r(rand()%201 + 55), g(rand()%201 + 55), b(rand()%201 + 55) { }
     RGB(double R, double G, double B): r(R), g(G), b(B) {}
-    RGB(const RGB& rgb): r(rgb.r), g(rgb.g), b(rgb.b) {}
-    RGB(RGB&& rgb) noexcept: r(rgb.r), g(rgb.g), b(rgb.b) {}
-    RGB& operator=(const RGB& rgb){ r=rgb.r; g=rgb.g; b=rgb.b; return *this; }
 };
 
 
@@ -19,14 +16,6 @@ struct Point2D {
     double x,y;
     Point2D(): x(0.0), y(0.0) {}
     Point2D(double X, double Y): x(X), y(Y) {}
-    Point2D(const Point2D& other): x(other.x), y(other.y) {}
-    Point2D(Point2D&& other) noexcept: x(other.x), y(other.y) {}
-
-    Point2D& operator=(const Point2D& other) {
-        x = other.x;
-        y = other.y;
-        return *this;
-    }
 
     Point2D translate(const Point2D& p) const { return Point2D(x+p.x, y+p.y); }
 
@@ -63,15 +52,7 @@ struct Circle {
     Point2D center;
     double radius;
     Circle(double x, double y, double rad): center(x,y), radius(rad) {}
-    Circle(const Circle& other): center(other.center), radius(other.radius) {}
-    Circle(Circle&& other) noexcept: center(std::move(other.center)), radius(other.radius) {}
     static double square(double x) { return x*x; }
-
-    Circle& operator=(const Circle& other) {
-        center = other.center;
-        radius = other.radius;
-        return *this;
-    }
 
     void draw(SDL_Renderer* rend) const {
         drawCircle(rend, center.x, center.y, radius);
@@ -84,7 +65,6 @@ struct Circle {
 
     bool checkCollision(const Circle& b) const {
         return square(center.x-b.center.x) + square(center.y-b.center.y) <= square(radius+b.radius);
-//        return distance(b) <= 0;
     }
 
     bool inside(const Circle& b) const {

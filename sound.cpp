@@ -136,7 +136,7 @@ int main(int /*argc*/, char* /*argv*/[]) {
     // Sweep every sensor frequency ascending then descending so you can confirm
     // the audio device actually produces sound before the agent starts moving.
     {
-        const int holdMs = int(TONE_SEC * 1000.0) + 40; // let each beep finish
+        const int holdMs = int(TONE_SEC * 1000.0) + 10; // let each beep finish
         for (int s = 0; s < SENSOR_COUNT; ++s) {         // ascending
             triggerBeep(s);
             std::this_thread::sleep_for(std::chrono::milliseconds(holdMs));

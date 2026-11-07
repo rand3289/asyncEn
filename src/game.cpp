@@ -164,24 +164,16 @@ void Game::move(int width, int height, int64_t timeUs){
         lives[i].move(timeUs);
     }
 
-    // move waves or delete them if health < 0
-    for(int i=0; i< waves.size(); ++i){
-        if(waves[i].getHealth() <= 0){ // remove waves that have dissipated
-            waves.erase(waves.begin() + i);
-            --i;
-            continue;
-        }
-        waves[i].move();
+    // remove dissipated waves, then advance the survivors
+    std::erase_if(waves, [](const Wave& w){ return w.getHealth() <= 0; });
+    for(Wave& wave: waves){
+        wave.move();
     }
 
-    // move waves produced by walls or delete them if health < 0
-    for(int i=0; i< wallWaves.size(); ++i){
-        if(wallWaves[i].getHealth() <= 0){ // remove waves that have dissipated
-            wallWaves.erase(wallWaves.begin() + i);
-            --i;
-            continue;
-        }
-        wallWaves[i].move();
+    // remove dissipated wall waves, then advance the survivors
+    std::erase_if(wallWaves, [](const WallWave& w){ return w.getHealth() <= 0; });
+    for(WallWave& wave: wallWaves){
+        wave.move();
     }
 
     // check collisions between lives and waves (per sensor, so the wave front

@@ -2,7 +2,7 @@
 #include "geometry.h"
 #include "waves.h"
 #include <SDL2/SDL.h>
-//#include <unistd.h> // close()
+#include <unistd.h> // close()
 
 enum ActionType{ none=0, kickLeft, kickRight, kickBoth };
 
@@ -32,12 +32,12 @@ public:
     Circle circle;    // TODO: make this private
 
     Life(int inputFd, int outputFd): health(10.0), color(), angle(10), nextWaveTimeUs(), inFd(inputFd), outFd(outputFd), circle(rand()%700, rand()%700, 5) { }
-    Life(const Life& other): health(other.health), color(other.color), angle(other.angle), nextWaveTimeUs(other.nextWaveTimeUs), inFd(other.inFd), outFd(other.outFd), circle(other.circle) { }
     Life(Life&& other) noexcept: health(other.health), color(std::move(other.color)), angle(other.angle), nextWaveTimeUs(std::move(other.nextWaveTimeUs)),
         inFd(other.inFd), outFd(other.outFd), circle(std::move(other.circle)) { other.inFd = -1; other.outFd = -1; }
-    // Move constructor marks the other object's handles invalid so they can be closed in destructor after 'other' object is destroyed
-    // OTHERWISE DO NOT CLOSE HANDLES IN DESTRUCTOR !!!  ~Life(){ close(inFd); close(outFd); }
-    Life& operator=(const Life& other);
+    // IMPORTANT: move constructor marks the source object's handles invalid
+    // so they can be closed in the destructor when the source object is destroyed
+    ~Life(){ close(inFd); close(outFd); }
+    Life& operator=(const Life& other); // the default is deleted if move constructor is declared
 
     void draw(SDL_Renderer* rend) const; // draws on screen ONLY!
     void move(int64_t timeUs);            // calculates things
