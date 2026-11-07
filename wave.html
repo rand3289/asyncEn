@@ -10,11 +10,18 @@
 @keyframes move { from { left: 0; } to { left: 400px; } }
 </style>
 </head>
+
 <body>
+<p>
+This is an animation of a wave propagating through a Life in asyncEn simulator.<br>
+Every time the wave hits a sensor, an event is generated.
+</p>
+
 <div id="container">
   <div id="circle"></div>
   <div id="line"></div>
 </div>
+
 <script>
 const container = document.getElementById('container');
 const line = document.getElementById('line');
@@ -47,8 +54,6 @@ setInterval(checkCollisions, 16);
 </script>
 
 <p>
-This is an animation of a wave propagating through a Life in the asyncEn.  Every time the wave hits a sensor, an event is generated.
-</p><p>
 LLM prompt that generated the animation:<br>
 Create an animation of a circle with 16 equally spaced points on its circumference and a vertical line going over this circle from left to right.
 When line hits the points, points enlarge momentarily.
