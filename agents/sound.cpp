@@ -192,7 +192,7 @@ int main(int /*argc*/, char* /*argv*/[]) {
         printf("0,%d,0\n", 1 + (rand() % 3));
         fflush(stdout); // prevent stdio from buffering the action
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(50)); // asyncEn runs at 30fps
+        std::this_thread::sleep_for(std::chrono::milliseconds(1)); // asyncEn runs at 30fps
     }
 
     SDL_CloseAudioDevice(dev);

@@ -119,6 +119,6 @@ int main(int argc, char* argv[]) {
         printf("0,%d,0\n", action);
         fflush(stdout); // prevent stdio from buffering our action
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(50)); // asyncEn runs at 30fps
+        std::this_thread::sleep_for(std::chrono::milliseconds(1)); // asyncEn runs at 30fps
     }
 }
